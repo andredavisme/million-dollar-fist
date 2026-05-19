@@ -1,0 +1,105 @@
+/* Million Dollar Fist — Main Styles */
+
+:root {
+  --color-primary: #1a1a2e;
+  --color-accent: #e94560;
+  --color-gold: #f5a623;
+  --color-light: #f4f4f4;
+  --color-mid: #cccccc;
+  --font-main: 'Segoe UI', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--color-primary);
+  color: var(--color-light);
+  line-height: 1.7;
+}
+
+header {
+  padding: 2rem;
+  border-bottom: 2px solid var(--color-accent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  color: var(--color-gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.tagline {
+  color: var(--color-mid);
+  font-size: 1rem;
+  margin: 0.5rem 0 1rem;
+}
+
+nav a {
+  color: var(--color-light);
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+nav a:hover { color: var(--color-accent); }
+
+main { max-width: 960px; margin: 0 auto; padding: 3rem 2rem; }
+
+section { margin-bottom: 4rem; }
+
+h2 {
+  font-size: 1.8rem;
+  color: var(--color-gold);
+  margin-bottom: 1rem;
+}
+
+p { margin-bottom: 1rem; color: var(--color-light); }
+
+ol, ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.5rem; }
+
+.btn {
+  display: inline-block;
+  background: var(--color-accent);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 700;
+  margin: 0.5rem 0.5rem 0 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn:hover { background: #c73652; }
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--color-gold);
+  color: var(--color-gold);
+}
+
+.btn-secondary:hover {
+  background: var(--color-gold);
+  color: var(--color-primary);
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid #333;
+  color: var(--color-mid);
+  font-size: 0.85rem;
+}
+
+footer a { color: var(--color-gold); text-decoration: none; }

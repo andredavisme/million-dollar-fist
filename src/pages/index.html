@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Million Dollar Fist</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Million Dollar Fist</h1>
+    <p class="tagline">A community-first framework for people who are done waiting for someone else to fix it.</p>
+    <nav>
+      <a href="philosophy.html">Philosophy</a>
+      <a href="compare.html">Compare Models</a>
+      <a href="calculator.html">Distribution Calculator</a>
+      <a href="data.html">Community Data</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Communities don't need permission.</h2>
+      <p>Housing is unaffordable. Youth development is abandoned. Civic life is reduced to scrolling on social media. This is not inevitable. It is a choice — and it can be reversed.</p>
+      <a href="philosophy.html" class="btn">Read the Philosophy</a>
+      <a href="calculator.html" class="btn btn-secondary">Run the Numbers</a>
+    </section>
+
+    <section class="pattern">
+      <h2>The Repeating Pattern</h2>
+      <ol>
+        <li>A community exists.</li>
+        <li>A government is established.</li>
+        <li>The community has needs.</li>
+        <li>The government responds — within its own bureaucratic constraints.</li>
+        <li>The community is the last to add to the solution.</li>
+      </ol>
+      <p>Million Dollar Fist breaks the pattern.</p>
+    </section>
+
+    <section class="model">
+      <h2>Where the Money Goes</h2>
+      <div id="allocation-chart"><!-- Interactive chart loads here --></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Million Dollar Fist &mdash; Sponsored by Data Solutions for Me LLC &mdash; <a href="https://datasolutionsforme.com">datasolutionsforme.com</a></p>
+  </footer>
+
+  <script src="../data/supabase-client.js"></script>
+  <script src="../data/allocation-chart.js"></script>
+</body>
+</html>
