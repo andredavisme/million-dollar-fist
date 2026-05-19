@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Communities — Million Dollar Fist</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/dashboard.css" />
+  <link rel="stylesheet" href="styles/compare-cities.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Million Dollar Fist</h1>
+    <p class="tagline">Community Comparison Tool</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="philosophy.html">Philosophy</a>
+      <a href="compare.html">Compare Models</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="dashboard.html">Data Dashboard</a>
+      <a href="compare-cities.html" class="active">Compare Cities</a>
+    </nav>
+  </header>
+
+  <main class="compare-main">
+    <div class="compare-hero">
+      <h2>Compare Up to 5 Communities</h2>
+      <p>Select communities to compare only the civic metrics that are actually available across states. Missing data is surfaced as part of the story.</p>
+    </div>
+
+    <div class="transparency-callout">
+      <div class="callout-title">Transparency Gap Signal</div>
+      <p>The dashboard prioritizes dimensions that are broadly available across Maine, Ohio, and Massachusetts. When a metric is missing or only partially available, that absence is shown as evidence of what governments do — or do not — make visible to residents.</p>
+    </div>
+
+    <div class="picker-section">
+      <div class="picker-header">
+        <h3>Select Communities</h3>
+        <span class="picker-count" id="picker-count">0 / 5 selected</span>
+      </div>
+      <div class="city-chips" id="city-chips"></div>
+      <button class="btn-compare" id="btn-compare" disabled>Run Comparison</button>
+    </div>
+
+    <div id="comparison-results" class="comparison-results hidden">
+      <div class="section-label">Overview</div>
+      <div class="availability-strip" id="availability-strip"></div>
+      <div class="summary-cards" id="summary-cards"></div>
+
+      <div class="compare-chart-section">
+        <div class="section-head-row"><h3>Revenue Collected per Capita</h3><span class="availability-tag available">Comparable across selected states</span></div>
+        <p class="chart-desc">Total government revenue divided by population.</p>
+        <div class="chart-wrap"><canvas id="revenuePerCapitaChart"></canvas></div>
+      </div>
+
+      <div class="compare-chart-section">
+        <div class="section-head-row"><h3>Allocated Spending per Capita</h3><span class="availability-tag available">Comparable across selected states</span></div>
+        <p class="chart-desc">Total allocated spending divided by population.</p>
+        <div class="chart-wrap"><canvas id="allocPerCapitaChart"></canvas></div>
+      </div>
+
+      <div class="compare-chart-section">
+        <div class="section-head-row"><h3>Spending Category Breakdown</h3><span class="availability-tag available">Comparable across selected states</span></div>
+        <p class="chart-desc">How each community distributes its allocated budget across service categories.</p>
+        <div class="compare-donut-row" id="category-donuts"></div>
+      </div>
+
+      <div class="compare-chart-section">
+        <div class="section-head-row"><h3>Outcome Status</h3><span class="availability-tag available">Comparable across selected states</span></div>
+        <p class="chart-desc">Achieved vs. partial vs. failed vs. unverified outcomes per community.</p>
+        <div class="chart-wrap"><canvas id="outcomeCompareChart"></canvas></div>
+      </div>
+
+      <div class="compare-chart-section" id="road-section">
+        <div class="section-head-row"><h3>Average Road Condition Score</h3><span class="availability-tag partial" id="road-availability-tag">Conditionally comparable</span></div>
+        <p class="chart-desc" id="road-chart-desc">Shown only when enough communities have road-condition data. Reflects state-maintained road datasets, not a full local street inventory.</p>
+        <div class="chart-wrap"><canvas id="roadConditionCompareChart"></canvas></div>
+      </div>
+
+      <div class="compare-chart-section mdf-section">
+        <div class="section-head-row"><h3>MDF Model Projection by Community</h3><span class="availability-tag modeled">Modeled from comparable revenue data</span></div>
+        <p class="chart-desc">If the MDF model were applied to each community's total collected revenue, here's how much would flow into each priority bucket.</p>
+        <div class="mdf-projection-table" id="mdf-projection-table"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Million Dollar Fist &mdash; Sponsored by Data Solutions for Me LLC &mdash; <a href="https://datasolutionsforme.com">datasolutionsforme.com</a></p>
+  </footer>
+
+  <script type="module" src="js/compare-cities.js"></script>
+</body>
+</html>
