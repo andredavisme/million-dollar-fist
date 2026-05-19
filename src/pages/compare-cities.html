@@ -3,112 +3,288 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Compare Communities — Million Dollar Fist</title>
-  <link rel="stylesheet" href="../styles/main.css" />
-  <link rel="stylesheet" href="../styles/dashboard.css" />
-  <link rel="stylesheet" href="../styles/compare-cities.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>MDF Compare — 207 Analytix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
 
-  <header>
-    <h1>Million Dollar Fist</h1>
-    <p class="tagline">Community Comparison Tool</p>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="philosophy.html">Philosophy</a>
-      <a href="compare.html">Compare Models</a>
-      <a href="calculator.html">Calculator</a>
-      <a href="dashboard.html">Data Dashboard</a>
-      <a href="compare-cities.html" class="active">Compare Cities</a>
-    </nav>
-  </header>
+  <div class="max-w-6xl mx-auto px-4 py-10">
 
-  <main class="compare-main">
-    <div class="compare-hero">
-      <h2>Compare Up to 5 Communities</h2>
-      <p>Select communities to compare only the civic metrics that are actually available across states. Missing data is surfaced as part of the story.</p>
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-white">MDF Compare</h1>
+      <p class="text-gray-400 mt-1">Actual municipal finance vs. what changes when community participation is introduced.</p>
     </div>
 
-    <div class="transparency-callout">
-      <div class="callout-title">Transparency Gap Signal</div>
-      <p>The dashboard prioritizes dimensions that are broadly available across Maine, Ohio, and Massachusetts. When a metric is missing or only partially available, that absence is shown as evidence of what governments do — or do not — make visible to residents.</p>
-    </div>
-
-    <div class="picker-section">
-      <div class="picker-header">
-        <h3>Select Communities</h3>
-        <span class="picker-count" id="picker-count">0 / 5 selected</span>
+    <!-- Controls -->
+    <div class="flex flex-wrap gap-4 mb-8">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">City</label>
+        <select id="citySelect" class="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm min-w-48">
+          <option value="">Loading cities...</option>
+        </select>
       </div>
-      <div class="city-chips" id="city-chips"></div>
-      <button class="btn-compare" id="btn-compare" disabled>Run Comparison</button>
-    </div>
-
-    <div id="comparison-results" class="comparison-results hidden">
-      <div class="section-label">Overview</div>
-      <div class="availability-strip" id="availability-strip"></div>
-      <div class="summary-cards" id="summary-cards"></div>
-
-      <div class="compare-chart-section">
-        <div class="section-head-row">
-          <h3>Revenue Collected per Capita</h3>
-          <span class="availability-tag available">Comparable across selected states</span>
-        </div>
-        <p class="chart-desc">Total government revenue divided by population.</p>
-        <div class="chart-wrap"><canvas id="revenuePerCapitaChart"></canvas></div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Fiscal Year</label>
+        <select id="yearSelect" class="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm">
+          <option value="2024">FY 2024</option>
+          <option value="2025">FY 2025</option>
+        </select>
       </div>
-
-      <div class="compare-chart-section">
-        <div class="section-head-row">
-          <h3>Allocated Spending per Capita</h3>
-          <span class="availability-tag available">Comparable across selected states</span>
-        </div>
-        <p class="chart-desc">Total allocated spending divided by population.</p>
-        <div class="chart-wrap"><canvas id="allocPerCapitaChart"></canvas></div>
-      </div>
-
-      <div class="compare-chart-section">
-        <div class="section-head-row">
-          <h3>Spending Category Breakdown</h3>
-          <span class="availability-tag available">Comparable across selected states</span>
-        </div>
-        <p class="chart-desc">How each community distributes its allocated budget across service categories.</p>
-        <div class="compare-donut-row" id="category-donuts"></div>
-      </div>
-
-      <div class="compare-chart-section">
-        <div class="section-head-row">
-          <h3>Outcome Status</h3>
-          <span class="availability-tag available">Comparable across selected states</span>
-        </div>
-        <p class="chart-desc">Achieved vs. partial vs. failed vs. unverified outcomes per community.</p>
-        <div class="chart-wrap"><canvas id="outcomeCompareChart"></canvas></div>
-      </div>
-
-      <div class="compare-chart-section" id="road-section">
-        <div class="section-head-row">
-          <h3>Average Road Condition Score</h3>
-          <span class="availability-tag partial" id="road-availability-tag">Conditionally comparable</span>
-        </div>
-        <p class="chart-desc" id="road-chart-desc">Shown only when enough communities have road-condition data. Where included, this reflects state-maintained road datasets and not a full local street inventory.</p>
-        <div class="chart-wrap"><canvas id="roadConditionCompareChart"></canvas></div>
-      </div>
-
-      <div class="compare-chart-section mdf-section">
-        <div class="section-head-row">
-          <h3>MDF Model Projection by Community</h3>
-          <span class="availability-tag modeled">Modeled from comparable revenue data</span>
-        </div>
-        <p class="chart-desc">If the MDF model were applied to each community’s total collected revenue, here’s how much would flow into each priority bucket.</p>
-        <div class="mdf-projection-table" id="mdf-projection-table"></div>
+      <div class="self-end">
+        <button onclick="loadCompare()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium transition">Compare &rarr;</button>
       </div>
     </div>
-  </main>
 
-  <footer>
-    <p>Million Dollar Fist &mdash; Sponsored by Data Solutions for Me LLC &mdash; <a href="https://datasolutionsforme.com">datasolutionsforme.com</a></p>
-  </footer>
+    <!-- Data Status Banner -->
+    <div id="statusBanner" class="hidden mb-6 p-4 rounded-lg border"></div>
 
-  <script type="module" src="../data/compare-cities.js"></script>
+    <!-- Results -->
+    <div id="compareResults" class="hidden">
+
+      <!-- City Header -->
+      <div id="cityHeader" class="mb-6"></div>
+
+      <!-- Scenario Cards -->
+      <div id="scenarioCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
+
+      <!-- Submit Verified Data CTA -->
+      <div id="verifiedDataCTA" class="hidden mt-8 p-6 rounded-xl border border-dashed border-amber-500 bg-amber-950/30">
+        <div class="flex items-start gap-4">
+          <span class="text-2xl">&#x1F4CB;</span>
+          <div class="flex-1">
+            <h3 class="font-semibold text-amber-300 mb-1">Have verified financial data for this city?</h3>
+            <p class="text-sm text-amber-200/70 mb-3">
+              The figures shown are <strong>modeled estimates</strong> based on population and standard MDF assumptions &mdash;
+              not sourced from official checkbook data. If you have access to audited financials, a city budget document,
+              or a checkbook export for this municipality, you can submit it to replace the model with verified numbers.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="openSubmitForm()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm font-medium transition">
+                Submit Verified Data
+              </button>
+              <a href="https://opencheckbook.maine.gov" target="_blank" class="border border-amber-600 text-amber-400 hover:text-amber-300 px-4 py-2 rounded text-sm transition">ME Open Checkbook &nearr;</a>
+              <a href="https://data.ohio.gov/wps/portal/gov/data/view/ohio-checkbook" target="_blank" class="border border-amber-600 text-amber-400 hover:text-amber-300 px-4 py-2 rounded text-sm transition">OH Checkbook &nearr;</a>
+              <a href="https://www.mass.gov/orgs/division-of-local-services" target="_blank" class="border border-amber-600 text-amber-400 hover:text-amber-300 px-4 py-2 rounded text-sm transition">MA DLS &nearr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Submit Verified Data Modal -->
+  <div id="submitModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-gray-700 rounded-xl max-w-lg w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Submit Verified Data</h2>
+        <button onclick="closeSubmitForm()" class="text-gray-400 hover:text-white text-xl">&times;</button>
+      </div>
+      <p class="text-sm text-gray-400 mb-4">
+        Provide your contact info and the data source. The 207 Analytix team will validate and replace the model
+        assumptions with your verified figures within 48 hours.
+      </p>
+      <form id="submitForm" class="space-y-3">
+        <input id="submitterName" type="text" placeholder="Your name" required
+          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+        <input id="submitterEmail" type="email" placeholder="Email address" required
+          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+        <input id="dataSourceUrl" type="url" placeholder="Source URL (checkbook, budget doc, audit, etc.)"
+          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+        <select id="sourceType" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white">
+          <option value="checkbook_export">Checkbook export (CSV)</option>
+          <option value="budget_document">Budget document</option>
+          <option value="audit_report">Audit report</option>
+          <option value="state_filing">State filing</option>
+          <option value="other">Other</option>
+        </select>
+        <textarea id="dataNotes" rows="3"
+          placeholder="Notes — fiscal year covered, what the data includes, any caveats"
+          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"></textarea>
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded text-sm font-medium transition">
+          Submit for Review
+        </button>
+      </form>
+      <p id="submitConfirm" class="hidden text-emerald-400 text-sm mt-3 text-center">
+        &#x2713; Submitted &mdash; we'll follow up within 48 hours.
+      </p>
+    </div>
+  </div>
+
+<script>
+const SUPABASE_URL = "https://hhyhulqngdkwsxhymmcd.supabase.co";
+const ANON_KEY = "sb_publishable_haKvwV0M7KMj4Qz69M6WGg_KmIfU-aI";
+const API = `${SUPABASE_URL}/functions/v1/mdf-compare-data`;
+
+let currentCityId = null;
+let currentData = null;
+
+async function init() {
+  const res = await fetch(API);
+  const json = await res.json();
+  const sel = document.getElementById("citySelect");
+  sel.innerHTML = '<option value="">Select a city...</option>';
+  const states = {};
+  json.municipalities.forEach(m => {
+    if (!states[m.state_code]) states[m.state_code] = [];
+    states[m.state_code].push(m);
+  });
+  Object.entries(states).forEach(([state, cities]) => {
+    const og = document.createElement("optgroup");
+    og.label = state;
+    cities.forEach(c => {
+      const o = document.createElement("option");
+      o.value = c.id;
+      o.textContent = `${c.name} (pop. ${c.population?.toLocaleString() ?? "—"})`;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+}
+
+async function loadCompare() {
+  const cityId = document.getElementById("citySelect").value;
+  const year = document.getElementById("yearSelect").value;
+  if (!cityId) return alert("Please select a city.");
+  const res = await fetch(`${API}?city_id=${cityId}&fiscal_year=${year}`);
+  currentData = await res.json();
+  currentCityId = cityId;
+  renderCompare(currentData);
+}
+
+function renderCompare(data) {
+  document.getElementById("compareResults").classList.remove("hidden");
+
+  const m = data.municipality;
+  document.getElementById("cityHeader").innerHTML = `
+    <div class="flex items-baseline gap-3 flex-wrap">
+      <h2 class="text-2xl font-bold">${m.name}, ${m.state_code}</h2>
+      <span class="text-gray-400 text-sm">FY ${data.fiscal_year}</span>
+      <span class="text-gray-400 text-sm">&middot;</span>
+      <span class="text-gray-400 text-sm">Pop. ${m.population?.toLocaleString() ?? "—"} (${m.population_source ?? "Census"} ${m.population_year ?? ""})</span>
+    </div>`;
+
+  const banner = document.getElementById("statusBanner");
+  if (data.data_status.assumptions_are_modeled) {
+    banner.className = "mb-6 p-4 rounded-lg border border-amber-600 bg-amber-950/40 text-amber-200 text-sm";
+    banner.innerHTML = `<strong>&#x26A0; Model Estimates Active</strong> &mdash; No verified checkbook data has been loaded for
+      <strong>${m.name} FY${data.fiscal_year}</strong>. The figures below use <strong>population-scaled MDF assumptions</strong>,
+      not sourced financials. They show relative impact, not absolute dollar accuracy.`;
+    document.getElementById("verifiedDataCTA").classList.remove("hidden");
+  } else {
+    banner.className = "mb-6 p-4 rounded-lg border border-emerald-600 bg-emerald-950/40 text-emerald-200 text-sm";
+    banner.innerHTML = `<strong>&#x2713; Verified Data</strong> &mdash; Revenue and expenditure data for
+      <strong>${m.name} FY${data.fiscal_year}</strong> is sourced from official checkbook records.`;
+    document.getElementById("verifiedDataCTA").classList.add("hidden");
+  }
+  banner.classList.remove("hidden");
+
+  const container = document.getElementById("scenarioCards");
+  container.innerHTML = "";
+
+  if (!data.assumptions || data.assumptions.length === 0) {
+    container.innerHTML = `<p class="text-gray-500 col-span-3">No published scenarios found for this city and year.</p>`;
+    return;
+  }
+
+  const isModeled = data.data_status.assumptions_are_modeled;
+
+  data.assumptions.forEach(a => {
+    const badge = isModeled
+      ? `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">&#x26A0; Modeled estimate</span>`
+      : `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">&#x2713; Verified data</span>`;
+
+    const pct = a.participation_rate_pct != null ? `${(a.participation_rate_pct * 100).toFixed(0)}%` : "—";
+    const jobs = a.community_jobs_created?.toLocaleString() ?? "—";
+    const dollars = a.dollars_circulated_locally != null
+      ? `$${(a.dollars_circulated_locally / 1_000_000).toFixed(2)}M` : "—";
+    const revenueUplift = a.revenue_uplift_pct != null ? `+${(a.revenue_uplift_pct * 100).toFixed(0)}%` : "—";
+    const safetyDelta = a.safety_spend_reduction_pct != null ? `-${(a.safety_spend_reduction_pct * 100).toFixed(0)}%` : "—";
+    const hsDelta = a.hs_spend_reduction_pct != null ? `-${(a.hs_spend_reduction_pct * 100).toFixed(0)}%` : "—";
+
+    container.innerHTML += `
+      <div class="bg-gray-900 border border-gray-700 rounded-xl p-5 flex flex-col gap-4">
+        <div class="flex justify-between items-start gap-2">
+          <h3 class="font-semibold text-white">${a.scenario_name}</h3>
+          ${badge}
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Community Participation</p>
+            <p class="text-lg font-bold text-blue-400">${pct}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Local Jobs Created</p>
+            <p class="text-lg font-bold text-emerald-400">${jobs}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">$ Circulated Locally</p>
+            <p class="text-lg font-bold text-emerald-400">${dollars}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Revenue Uplift</p>
+            <p class="text-lg font-bold text-blue-400">${revenueUplift}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Safety Spend &Delta;</p>
+            <p class="text-lg font-bold text-orange-400">${safetyDelta}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Health/HS Spend &Delta;</p>
+            <p class="text-lg font-bold text-orange-400">${hsDelta}</p>
+          </div>
+        </div>
+        ${isModeled ? `<p class="text-xs text-amber-600/80 border-t border-gray-800 pt-3">
+          Assumptions scaled from population-based MDF model.
+          <button onclick="openSubmitForm()" class="underline text-amber-500 hover:text-amber-400">Submit verified data</button> to replace.
+        </p>` : ""}
+      </div>`;
+  });
+}
+
+function openSubmitForm() {
+  document.getElementById("submitForm").classList.remove("hidden");
+  document.getElementById("submitConfirm").classList.add("hidden");
+  document.getElementById("submitModal").classList.remove("hidden");
+}
+function closeSubmitForm() {
+  document.getElementById("submitModal").classList.add("hidden");
+}
+
+document.getElementById("submitForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const payload = {
+    submitter_name: document.getElementById("submitterName").value,
+    submitter_email: document.getElementById("submitterEmail").value,
+    municipality_id: currentCityId,
+    fiscal_year: parseInt(document.getElementById("yearSelect").value),
+    source_url: document.getElementById("dataSourceUrl").value || null,
+    source_type: document.getElementById("sourceType").value,
+    notes: document.getElementById("dataNotes").value || null,
+    status: "pending"
+  };
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/mdf_data_submissions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": ANON_KEY,
+      "Authorization": `Bearer ${ANON_KEY}`,
+      "Prefer": "return=minimal"
+    },
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    document.getElementById("submitConfirm").classList.remove("hidden");
+    document.getElementById("submitForm").classList.add("hidden");
+  } else {
+    const err = await res.text();
+    alert("Submission failed: " + err);
+  }
+});
+
+init();
+</script>
 </body>
 </html>
