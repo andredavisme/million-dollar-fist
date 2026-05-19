@@ -6,9 +6,8 @@
   padding: 2rem 1.5rem;
 }
 
-/* Hero */
 .compare-hero {
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 .compare-hero h2 {
   font-size: 1.8rem;
@@ -17,10 +16,32 @@
 .compare-hero p {
   color: #aaa;
   font-size: 0.95rem;
-  max-width: 600px;
+  max-width: 720px;
 }
 
-/* Picker */
+.transparency-callout {
+  background: linear-gradient(135deg, rgba(233,69,96,0.12), rgba(245,166,35,0.08));
+  border: 1px solid rgba(233,69,96,0.35);
+  border-left: 4px solid #e94560;
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.transparency-callout .callout-title {
+  color: #f5a623;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.transparency-callout p {
+  color: #d6d6d6;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .picker-section {
   background: #16213e;
   border: 1px solid #2a2a4a;
@@ -35,13 +56,11 @@
   align-items: center;
   margin-bottom: 1rem;
 }
-
 .picker-header h3 {
   font-size: 1rem;
   color: var(--color-gold);
   margin: 0;
 }
-
 .picker-count {
   font-size: 0.8rem;
   color: #888;
@@ -56,7 +75,6 @@
   gap: 0.6rem;
   margin-bottom: 1.25rem;
 }
-
 .city-chip {
   background: #0f1a30;
   border: 1px solid #3a3a5a;
@@ -68,19 +86,16 @@
   transition: all 0.15s;
   user-select: none;
 }
-
 .city-chip:hover {
   border-color: var(--color-gold);
   color: var(--color-gold);
 }
-
 .city-chip.selected {
   background: var(--color-gold);
   border-color: var(--color-gold);
   color: #0f1a30;
   font-weight: 700;
 }
-
 .city-chip.disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -100,19 +115,15 @@
   text-transform: uppercase;
   transition: opacity 0.2s;
 }
-
 .btn-compare:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
-
 .btn-compare:hover:not(:disabled) {
   opacity: 0.85;
 }
 
-/* Results */
 .comparison-results.hidden { display: none; }
-
 .section-label {
   font-size: 0.7rem;
   font-weight: 800;
@@ -122,14 +133,29 @@
   margin-bottom: 0.75rem;
 }
 
-/* Summary Cards */
+.availability-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.availability-pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.availability-pill.available { background: rgba(78,205,196,0.15); color: #4ecdc4; border: 1px solid rgba(78,205,196,0.35); }
+.availability-pill.partial { background: rgba(245,166,35,0.15); color: #f5a623; border: 1px solid rgba(245,166,35,0.35); }
+.availability-pill.missing { background: rgba(233,69,96,0.15); color: #e94560; border: 1px solid rgba(233,69,96,0.35); }
+
 .summary-cards {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 2.5rem;
 }
-
 .summary-card {
   flex: 1 1 180px;
   background: #16213e;
@@ -138,7 +164,6 @@
   padding: 1.25rem 1rem;
   text-align: center;
 }
-
 .summary-card .city-name {
   font-size: 0.75rem;
   font-weight: 800;
@@ -147,24 +172,39 @@
   margin-bottom: 0.75rem;
   opacity: 0.9;
 }
-
-.summary-card .stat {
-  margin-bottom: 0.4rem;
-}
-
-.summary-card .stat-value {
-  font-size: 1.3rem;
-  font-weight: 800;
-}
-
+.summary-card .stat { margin-bottom: 0.4rem; }
+.summary-card .stat-value { font-size: 1.3rem; font-weight: 800; }
 .summary-card .stat-label {
   font-size: 0.7rem;
   color: #888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.summary-card .data-flags {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+}
+.summary-card .flag {
+  font-size: 0.63rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid #2a2a4a;
+  color: #aaa;
+}
+.summary-card .flag.warn {
+  border-color: rgba(245,166,35,0.35);
+  color: #f5a623;
+  background: rgba(245,166,35,0.08);
+}
+.summary-card .flag.good {
+  border-color: rgba(78,205,196,0.35);
+  color: #4ecdc4;
+  background: rgba(78,205,196,0.08);
+}
 
-/* Chart Sections */
 .compare-chart-section {
   background: #16213e;
   border: 1px solid #2a2a4a;
@@ -172,35 +212,54 @@
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
-
 .compare-chart-section h3 {
   color: var(--color-gold);
   font-size: 1rem;
-  margin-bottom: 0.25rem;
+  margin: 0;
 }
-
+.section-head-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+.availability-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  white-space: nowrap;
+}
+.availability-tag.available { background: rgba(78,205,196,0.15); color: #4ecdc4; }
+.availability-tag.partial { background: rgba(245,166,35,0.15); color: #f5a623; }
+.availability-tag.modeled { background: rgba(162,155,254,0.15); color: #a29bfe; }
+.availability-tag.missing { background: rgba(233,69,96,0.15); color: #e94560; }
+.chart-desc {
+  color: #aaa;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
 .chart-wrap {
   position: relative;
   max-height: 320px;
 }
-
 .chart-wrap canvas {
   max-height: 320px;
 }
 
-/* Donut Row */
 .compare-donut-row {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   margin-top: 1rem;
 }
-
 .donut-item {
   flex: 1 1 200px;
   text-align: center;
 }
-
 .donut-item .donut-label {
   font-size: 0.8rem;
   font-weight: 700;
@@ -208,31 +267,25 @@
   letter-spacing: 0.5px;
   margin-bottom: 0.5rem;
 }
-
 .donut-item canvas {
   max-height: 180px;
 }
 
-/* MDF Projection Table */
 .mdf-section {
   border-color: var(--color-accent);
 }
-
 .mdf-section h3 {
   color: var(--color-accent);
 }
-
 .mdf-projection-table {
   overflow-x: auto;
   margin-top: 1rem;
 }
-
 .mdf-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.85rem;
 }
-
 .mdf-table th {
   background: #0f1a30;
   color: var(--color-gold);
@@ -243,19 +296,17 @@
   letter-spacing: 0.5px;
   border-bottom: 1px solid #2a2a4a;
 }
-
 .mdf-table td {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid #1a1a3a;
   color: #ccc;
 }
-
 .mdf-table tr:hover td { background: #1a1a3a; }
-
 .mdf-table td.bucket { color: #f4f4f4; font-weight: 600; }
 .mdf-table td.pct { color: #888; }
 
 @media (max-width: 700px) {
   .summary-cards { flex-direction: column; }
   .compare-donut-row { flex-direction: column; }
+  .section-head-row { flex-direction: column; align-items: flex-start; }
 }

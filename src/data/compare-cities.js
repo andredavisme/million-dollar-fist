@@ -4,6 +4,7 @@
 import { supabase } from './supabase-client.js';
 
 const MAX_SELECT = 5;
+const MIN_ROAD_COVERAGE = 3;
 const CITY_COLORS = ['#f5a623','#e94560','#4ecdc4','#a29bfe','#88d8b0'];
 const CHART_COLORS = ['#e94560','#f5a623','#4ecdc4','#a8e6cf','#88d8b0','#6c5ce7','#fd79a8','#fdcb6e','#74b9ff','#a29bfe'];
 
@@ -59,7 +60,33 @@ function makeChart(id, type, labels, datasets, options = {}) {
   return chart;
 }
 
-// ---- Load Community Chips ----
+function getCoverage(data) {
+  const coverage = {};
+  coverage.budget = data.communities.filter(c => data.budget.some(b => b.community_id === c.id)).length;
+  coverage.allocations = data.communities.filter(c => data.allocations.some(a => a.community_id === c.id)).length;
+  coverage.outcomes = data.communities.filter(c => data.outcomes.some(o => o.civic_allocations?.community_id === c.id)).length;
+  coverage.roads = data.communities.filter(c => data.roads.some(r => r.community_id === c.id)).length;
+  return coverage;
+}
+
+function pillClass(count, total) {
+  if (count === total) return 'available';
+  if (count >= Math.max(2, total - 2)) return 'partial';
+  return 'missing';
+}
+
+function buildAvailabilityStrip(data) {
+  const total = data.communities.length;
+  const coverage = getCoverage(data);
+  const strip = document.getElementById('availability-strip');
+  strip.innerHTML = `
+    <div class="availability-pill ${pillClass(coverage.budget, total)}">Revenue data: ${coverage.budget}/${total}</div>
+    <div class="availability-pill ${pillClass(coverage.allocations, total)}">Allocation data: ${coverage.allocations}/${total}</div>
+    <div class="availability-pill ${pillClass(coverage.outcomes, total)}">Outcome data: ${coverage.outcomes}/${total}</div>
+    <div class="availability-pill ${pillClass(coverage.roads, total)}">Road data: ${coverage.roads}/${total}</div>
+  `;
+}
+
 async function loadCommunityChips() {
   const { data } = await supabase
     .from('civic_communities')
@@ -97,7 +124,6 @@ function updatePickerState() {
   document.getElementById('picker-count').textContent = `${count} / ${MAX_SELECT} selected`;
   document.getElementById('btn-compare').disabled = count < 2;
 
-  // Disable unchosen chips if at max
   document.querySelectorAll('.city-chip').forEach(chip => {
     if (!chip.classList.contains('selected')) {
       chip.classList.toggle('disabled', count >= MAX_SELECT);
@@ -105,7 +131,6 @@ function updatePickerState() {
   });
 }
 
-// ---- Fetch Data for Selected Communities ----
 async function fetchCommunityData(ids) {
   const communities = allCommunities.filter(c => ids.includes(c.id));
 
@@ -127,9 +152,8 @@ async function fetchCommunityData(ids) {
   };
 }
 
-// ---- Build Summary Cards ----
 function buildSummaryCards(data) {
-  const { communities, budget, allocations } = data;
+  const { communities, budget, allocations, outcomes, roads } = data;
   const container = document.getElementById('summary-cards');
   container.innerHTML = '';
 
@@ -139,6 +163,10 @@ function buildSummaryCards(data) {
     const totalAlloc = allocations.filter(a => a.community_id === c.id).reduce((s, a) => s + Number(a.amount_allocated || 0), 0);
     const perCapRev = c.population ? totalRevenue / c.population : 0;
     const perCapAlloc = c.population ? totalAlloc / c.population : 0;
+    const hasBudget = budget.some(b => b.community_id === c.id);
+    const hasAlloc = allocations.some(a => a.community_id === c.id);
+    const hasOutcome = outcomes.some(o => o.civic_allocations?.community_id === c.id);
+    const hasRoads = roads.some(r => r.community_id === c.id);
 
     const card = document.createElement('div');
     card.className = 'summary-card';
@@ -150,27 +178,32 @@ function buildSummaryCards(data) {
         <div class="stat-label">Population</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${fmt(totalRevenue)}</div>
+        <div class="stat-value">${hasBudget ? fmt(totalRevenue) : '--'}</div>
         <div class="stat-label">Total Revenue</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${fmt(totalAlloc)}</div>
+        <div class="stat-value">${hasAlloc ? fmt(totalAlloc) : '--'}</div>
         <div class="stat-label">Total Allocated</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${fmt(perCapRev)}</div>
+        <div class="stat-value">${hasBudget ? fmt(perCapRev) : '--'}</div>
         <div class="stat-label">Revenue / Capita</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${fmt(perCapAlloc)}</div>
+        <div class="stat-value">${hasAlloc ? fmt(perCapAlloc) : '--'}</div>
         <div class="stat-label">Alloc / Capita</div>
+      </div>
+      <div class="data-flags">
+        <span class="flag ${hasBudget ? 'good' : 'warn'}">Revenue ${hasBudget ? 'available' : 'missing'}</span>
+        <span class="flag ${hasAlloc ? 'good' : 'warn'}">Allocations ${hasAlloc ? 'available' : 'missing'}</span>
+        <span class="flag ${hasOutcome ? 'good' : 'warn'}">Outcomes ${hasOutcome ? 'available' : 'missing'}</span>
+        <span class="flag ${hasRoads ? 'good' : 'warn'}">Roads ${hasRoads ? 'available' : 'missing'}</span>
       </div>
     `;
     container.appendChild(card);
   });
 }
 
-// ---- Per Capita Bar Charts ----
 function buildPerCapitaCharts(data) {
   const { communities, budget, allocations } = data;
   const labels = communities.map(c => `${c.name}, ${c.state}`);
@@ -178,12 +211,12 @@ function buildPerCapitaCharts(data) {
 
   const revenues = communities.map(c => {
     const total = budget.filter(b => b.community_id === c.id).reduce((s, b) => s + Number(b.amount_collected || 0), 0);
-    return c.population ? total / c.population : 0;
+    return c.population && total ? total / c.population : null;
   });
 
   const allocs = communities.map(c => {
     const total = allocations.filter(a => a.community_id === c.id).reduce((s, a) => s + Number(a.amount_allocated || 0), 0);
-    return c.population ? total / c.population : 0;
+    return c.population && total ? total / c.population : null;
   });
 
   makeChart('revenuePerCapitaChart', 'bar', labels, [{
@@ -203,7 +236,6 @@ function buildPerCapitaCharts(data) {
   }], { plugins: { legend: { display: false } } });
 }
 
-// ---- Category Donuts per City ----
 function buildCategoryDonuts(data) {
   const { communities, allocations } = data;
   const container = document.getElementById('category-donuts');
@@ -221,6 +253,16 @@ function buildCategoryDonuts(data) {
     const canvasId = `donut-${c.id}`;
     const wrap = document.createElement('div');
     wrap.className = 'donut-item';
+
+    if (!cityAllocs.length) {
+      wrap.innerHTML = `
+        <div class="donut-label" style="color:${color}">${c.name}, ${c.state}</div>
+        <div class="chart-desc">No comparable category allocation data available.</div>
+      `;
+      container.appendChild(wrap);
+      return;
+    }
+
     wrap.innerHTML = `
       <div class="donut-label" style="color:${color}">${c.name}, ${c.state}</div>
       <canvas id="${canvasId}" height="180"></canvas>
@@ -250,7 +292,6 @@ function buildCategoryDonuts(data) {
   });
 }
 
-// ---- Outcome Grouped Bar Chart ----
 function buildOutcomeChart(data) {
   const { communities, outcomes } = data;
   const statuses = ['achieved','partial','pending','unverified','failed'];
@@ -259,12 +300,7 @@ function buildOutcomeChart(data) {
 
   const datasets = statuses.map(status => ({
     label: status.charAt(0).toUpperCase() + status.slice(1),
-    data: communities.map(c => {
-      return outcomes.filter(o =>
-        o.outcome_status === status &&
-        o.civic_allocations?.community_id === c.id
-      ).length;
-    }),
+    data: communities.map(c => outcomes.filter(o => o.outcome_status === status && o.civic_allocations?.community_id === c.id).length || 0),
     backgroundColor: statusColors[status],
     borderWidth: 0,
     borderRadius: 3,
@@ -278,21 +314,36 @@ function buildOutcomeChart(data) {
   });
 }
 
-// ---- Road Condition Bar Chart ----
 function buildRoadConditionChart(data) {
   const { communities, roads } = data;
+  const section = document.getElementById('road-section');
+  const tag = document.getElementById('road-availability-tag');
+  const desc = document.getElementById('road-chart-desc');
+  const availableCommunities = communities.filter(c => roads.some(r => r.community_id === c.id));
+
+  if (availableCommunities.length < MIN_ROAD_COVERAGE) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+  tag.className = `availability-tag ${availableCommunities.length === communities.length ? 'available' : 'partial'}`;
+  tag.textContent = availableCommunities.length === communities.length
+    ? 'Comparable across selected communities'
+    : `${availableCommunities.length}/${communities.length} communities have road data`;
+  desc.textContent = 'Shown only because enough communities have road-condition data. This reflects state-maintained road datasets and not a full local street inventory.';
+
   const labels = communities.map(c => `${c.name}, ${c.state}`);
   const colors = communities.map((_, i) => CITY_COLORS[i]);
-
   const avgs = communities.map(c => {
     const segs = roads.filter(r => r.community_id === c.id);
-    if (!segs.length) return 0;
-    return segs.reduce((s, r) => s + Number(r.condition_score || 0), 0) / segs.length;
+    if (!segs.length) return null;
+    return +(segs.reduce((s, r) => s + Number(r.condition_score || 0), 0) / segs.length).toFixed(1);
   });
 
   makeChart('roadConditionCompareChart', 'bar', labels, [{
     label: 'Avg Road Condition (0-100)',
-    data: avgs.map(v => +v.toFixed(1)),
+    data: avgs,
     backgroundColor: colors,
     borderWidth: 0,
     borderRadius: 4,
@@ -305,7 +356,6 @@ function buildRoadConditionChart(data) {
   });
 }
 
-// ---- MDF Projection Table ----
 function buildMDFTable(data) {
   const { communities, budget } = data;
   const container = document.getElementById('mdf-projection-table');
@@ -315,17 +365,14 @@ function buildMDFTable(data) {
     revenue: budget.filter(b => b.community_id === c.id).reduce((s, b) => s + Number(b.amount_collected || 0), 0)
   }));
 
-  const headers = ['MDF Bucket', '%', ...communityTotals.map((c, i) =>
-    `<span style="color:${CITY_COLORS[i]}">${c.name}</span>`
-  )].join('</th><th>');
+  const headers = ['MDF Bucket', '%', ...communityTotals.map((c, i) => `<span style="color:${CITY_COLORS[i]}">${c.name}</span>`)].join('</th><th>');
 
   const rows = MDF_BUCKETS.map(bucket => {
-    const cells = communityTotals.map(c => `<td>${fmt(c.revenue * bucket.pct / 100)}</td>`).join('');
+    const cells = communityTotals.map(c => `<td>${c.revenue ? fmt(c.revenue * bucket.pct / 100) : '--'}</td>`).join('');
     return `<tr><td class="bucket">${bucket.label}</td><td class="pct">${bucket.pct}%</td>${cells}</tr>`;
   }).join('');
 
-  // Totals row
-  const totalCells = communityTotals.map(c => `<td style="color:var(--color-gold);font-weight:800">${fmt(c.revenue)}</td>`).join('');
+  const totalCells = communityTotals.map(c => `<td style="color:var(--color-gold);font-weight:800">${c.revenue ? fmt(c.revenue) : '--'}</td>`).join('');
   const totalRow = `<tr style="border-top:2px solid #2a2a4a"><td class="bucket" style="color:var(--color-gold)">Total Revenue</td><td class="pct">100%</td>${totalCells}</tr>`;
 
   container.innerHTML = `
@@ -336,12 +383,11 @@ function buildMDFTable(data) {
   `;
 }
 
-// ---- Run Comparison ----
 async function runComparison() {
   destroyCharts();
-
   const data = await fetchCommunityData(selectedIds);
 
+  buildAvailabilityStrip(data);
   buildSummaryCards(data);
   buildPerCapitaCharts(data);
   buildCategoryDonuts(data);
@@ -354,6 +400,5 @@ async function runComparison() {
   results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ---- Init ----
 await loadCommunityChips();
 document.getElementById('btn-compare').addEventListener('click', runComparison);
