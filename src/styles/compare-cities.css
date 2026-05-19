@@ -1,0 +1,261 @@
+/* Compare Cities — Million Dollar Fist */
+
+.compare-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Hero */
+.compare-hero {
+  margin-bottom: 2rem;
+}
+.compare-hero h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+}
+.compare-hero p {
+  color: #aaa;
+  font-size: 0.95rem;
+  max-width: 600px;
+}
+
+/* Picker */
+.picker-section {
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.picker-header h3 {
+  font-size: 1rem;
+  color: var(--color-gold);
+  margin: 0;
+}
+
+.picker-count {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.city-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.city-chip {
+  background: #0f1a30;
+  border: 1px solid #3a3a5a;
+  color: #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.city-chip:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.city-chip.selected {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: #0f1a30;
+  font-weight: 700;
+}
+
+.city-chip.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-compare {
+  background: var(--color-gold);
+  color: #0f1a30;
+  border: none;
+  padding: 0.65rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+
+.btn-compare:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-compare:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* Results */
+.comparison-results.hidden { display: none; }
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+/* Summary Cards */
+.summary-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.summary-card {
+  flex: 1 1 180px;
+  background: #16213e;
+  border-radius: 8px;
+  border: 2px solid;
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+
+.summary-card .city-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+  opacity: 0.9;
+}
+
+.summary-card .stat {
+  margin-bottom: 0.4rem;
+}
+
+.summary-card .stat-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.summary-card .stat-label {
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Chart Sections */
+.compare-chart-section {
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.compare-chart-section h3 {
+  color: var(--color-gold);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.chart-wrap {
+  position: relative;
+  max-height: 320px;
+}
+
+.chart-wrap canvas {
+  max-height: 320px;
+}
+
+/* Donut Row */
+.compare-donut-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.donut-item {
+  flex: 1 1 200px;
+  text-align: center;
+}
+
+.donut-item .donut-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.donut-item canvas {
+  max-height: 180px;
+}
+
+/* MDF Projection Table */
+.mdf-section {
+  border-color: var(--color-accent);
+}
+
+.mdf-section h3 {
+  color: var(--color-accent);
+}
+
+.mdf-projection-table {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.mdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.mdf-table th {
+  background: #0f1a30;
+  color: var(--color-gold);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #2a2a4a;
+}
+
+.mdf-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #1a1a3a;
+  color: #ccc;
+}
+
+.mdf-table tr:hover td { background: #1a1a3a; }
+
+.mdf-table td.bucket { color: #f4f4f4; font-weight: 600; }
+.mdf-table td.pct { color: #888; }
+
+@media (max-width: 700px) {
+  .summary-cards { flex-direction: column; }
+  .compare-donut-row { flex-direction: column; }
+}
