@@ -1,4 +1,9 @@
-// Supabase client — Million Dollar Fist
+// Supabase Client — Million Dollar Fist
+// Project: andredavisme's Project
+// Region: us-west-2
+// NOTE: This is a public anon key — safe for frontend use.
+// For local dev, store in a .env file and add .env to .gitignore.
+
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 const SUPABASE_URL = 'https://hhyhulqngdkwsxhymmcd.supabase.co';
