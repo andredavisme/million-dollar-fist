@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Do We Have Enough Lumber? &mdash; Million Dollar Fist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    canvas { display: block; image-rendering: pixelated; }
+    #gameCanvas { border: 2px solid #374151; border-radius: 8px; background: #111827; }
+    .meter-fill { transition: width 0.3s; }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
+
+  <nav class="border-b border-gray-800 px-6 py-4 flex items-center gap-6 text-sm">
+    <a href="index.html" class="font-bold text-white text-base">Million Dollar Fist</a>
+    <a href="how-it-works.html" class="text-gray-400 hover:text-white transition">How It Works</a>
+    <a href="game.html" class="text-white font-medium">The Game</a>
+    <a href="compare-cities.html" class="text-gray-400 hover:text-white transition">Compare</a>
+    <a href="dashboard.html" class="text-gray-400 hover:text-white transition">Dashboard</a>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 py-10">
+
+    <div class="mb-6">
+      <p class="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Community Resource Game</p>
+      <h1 class="text-3xl font-bold text-white mb-2">Do We Have Enough Lumber?</h1>
+      <p class="text-gray-400 max-w-2xl">You are the General Coordinator of a new MDF community. Resources are scattered across the neighborhood. Each building needs the right resource to survive. Two crises will hit mid-game. Keep all 10 buildings above 0% before the timer runs out.</p>
+    </div>
+
+    <!-- Controls legend -->
+    <div class="flex flex-wrap gap-3 mb-4 text-xs">
+      <span class="bg-gray-800 px-3 py-1.5 rounded-lg text-gray-300"><kbd class="text-white font-bold">&#x2190;&#x2191;&#x2192;&#x2193;</kbd> Move</span>
+      <span class="bg-gray-800 px-3 py-1.5 rounded-lg text-gray-300"><kbd class="text-white font-bold">SPACE</kbd> Pick up / Drop resource</span>
+      <span class="bg-gray-800 px-3 py-1.5 rounded-lg text-gray-300"><kbd class="text-white font-bold">R</kbd> Restart</span>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+
+      <!-- Canvas -->
+      <div class="flex-shrink-0">
+        <canvas id="gameCanvas" width="560" height="560"></canvas>
+        <!-- Timer + status -->
+        <div class="mt-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400 text-sm">Time:</span>
+            <span id="timerDisplay" class="text-white font-bold text-lg">45s</span>
+          </div>
+          <div id="carrying" class="text-sm text-gray-400">Carrying: <span id="carryLabel" class="text-white font-medium">nothing</span></div>
+          <div id="crisisMsg" class="text-red-400 text-sm font-semibold hidden"></div>
+        </div>
+      </div>
+
+      <!-- Building meters sidebar -->
+      <div class="flex-1 min-w-0">
+        <p class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">Building Status</p>
+        <div id="meters" class="space-y-2"></div>
+        <div id="gameOverPanel" class="hidden mt-6 p-5 rounded-xl border">
+          <h2 id="gameOverTitle" class="text-xl font-bold mb-2"></h2>
+          <p id="gameOverMsg" class="text-sm text-gray-300 mb-4"></p>
+          <button onclick="restartGame()" class="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-5 py-2 rounded-lg transition">Play Again</button>
+          <a href="how-it-works.html" class="ml-3 text-sm text-gray-400 hover:text-white transition">Back to How It Works</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resource legend -->
+    <div class="mt-6 flex flex-wrap gap-4 text-xs text-gray-400">
+      <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded" style="background:#4ade80"></span> Food supply</div>
+      <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded" style="background:#60a5fa"></span> Health supply</div>
+      <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded" style="background:#a78bfa"></span> Education material</div>
+      <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded" style="background:#fbbf24"></span> Lumber (general build)</div>
+      <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded" style="background:#f87171"></span> Emergency supply</div>
+      <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded" style="background:#34d399"></span> Capital / investment</div>
+    </div>
+  </main>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────
+const COLS = 14, ROWS = 14, CELL = 40;
+const GAME_DURATION = 45; // seconds
+
+// Resource types
+const RES = {
+  FOOD:      { key: 'food',      color: '#4ade80', label: 'Food supply' },
+  HEALTH:    { key: 'health',    color: '#60a5fa', label: 'Health supply' },
+  EDUCATION: { key: 'education', color: '#a78bfa', label: 'Education material' },
+  LUMBER:    { key: 'lumber',    color: '#fbbf24', label: 'Lumber' },
+  EMERGENCY: { key: 'emergency', color: '#f87171', label: 'Emergency supply' },
+  CAPITAL:   { key: 'capital',   color: '#34d399', label: 'Capital' },
+};
+
+// Buildings — one per MDF project
+const BUILDING_DEFS = [
+  { id: 'food1',     label: 'Community Kitchen',    res: 'food',      icon: '🍲', col: 1,  row: 1 },
+  { id: 'food2',     label: 'Meal Delivery',         res: 'food',      icon: '🚚', col: 4,  row: 1 },
+  { id: 'education', label: 'Education Center',      res: 'education', icon: '📚', col: 8,  row: 1 },
+  { id: 'housing',   label: 'Housing Project',       res: 'lumber',    icon: '🏠', col: 12, row: 1 },
+  { id: 'hygiene',   label: 'Hygiene Station',       res: 'health',    icon: '🚿', col: 1,  row: 6 },
+  { id: 'health',    label: 'Health Clinic',         res: 'health',    icon: '🏥', col: 5,  row: 6 },
+  { id: 'business',  label: 'Business Hub',          res: 'capital',   icon: '💼', col: 9,  row: 6 },
+  { id: 'emergency', label: 'Emergency Relief',      res: 'emergency', icon: '🚨', col: 12, row: 6 },
+  { id: 'investment',label: 'Investment Project',    res: 'capital',   icon: '📈', col: 3,  row: 11 },
+  { id: 'payout',    label: 'Community Payout',      res: 'capital',   icon: '🤝', col: 10, row: 11 },
+];
+
+// Initial resource spawn positions (scattered)
+const RESOURCE_SPAWNS = [
+  { type: 'food',      col: 3,  row: 3  },
+  { type: 'food',      col: 6,  row: 2  },
+  { type: 'food',      col: 2,  row: 8  },
+  { type: 'health',    col: 7,  row: 5  },
+  { type: 'health',    col: 11, row: 3  },
+  { type: 'education', col: 9,  row: 4  },
+  { type: 'education', col: 5,  row: 10 },
+  { type: 'lumber',    col: 11, row: 8  },
+  { type: 'lumber',    col: 2,  row: 12 },
+  { type: 'emergency', col: 13, row: 5  },
+  { type: 'emergency', col: 7,  row: 12 },
+  { type: 'capital',   col: 4,  row: 12 },
+  { type: 'capital',   col: 12, row: 11 },
+  { type: 'capital',   col: 8,  row: 9  },
+];
+
+// Crisis events
+const CRISES = [
+  { time: 30, name: '🦠 Health Crisis!', targets: ['health', 'hygiene'], drain: 3, msg: 'Illness spreading — Health buildings draining fast!' },
+  { time: 15, name: '⚡ Blackout!',       targets: ['emergency', 'food1', 'food2'], drain: 3, msg: 'Grid down — Emergency Relief and Kitchen need resources NOW!' },
+];
+
+// ─── State ───────────────────────────────────────────────────
+let player, buildings, resources, carrying, timeLeft, gameOver, won, timerInterval, crisisActive;
+
+function initState() {
+  player = { col: 7, row: 7 };
+  carrying = null;
+  timeLeft = GAME_DURATION;
+  gameOver = false;
+  won = false;
+  crisisActive = [];
+
+  buildings = BUILDING_DEFS.map(b => ({ ...b, level: 60 + Math.floor(Math.random() * 20) }));
+  resources = RESOURCE_SPAWNS.map((r, i) => ({ ...r, id: i, active: true }));
+}
+
+// ─── Canvas ──────────────────────────────────────────────────
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+function cellX(col) { return col * CELL; }
+function cellY(row) { return row * CELL; }
+
+function drawGrid() {
+  ctx.fillStyle = '#111827';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#1f2937';
+  ctx.lineWidth = 1;
+  for (let c = 0; c <= COLS; c++) {
+    ctx.beginPath(); ctx.moveTo(c * CELL, 0); ctx.lineTo(c * CELL, ROWS * CELL); ctx.stroke();
+  }
+  for (let r = 0; r <= ROWS; r++) {
+    ctx.beginPath(); ctx.moveTo(0, r * CELL); ctx.lineTo(COLS * CELL, r * CELL); ctx.stroke();
+  }
+}
+
+function drawBuildings() {
+  buildings.forEach(b => {
+    const x = cellX(b.col), y = cellY(b.row);
+    const lvl = b.level;
+    const isCrisis = crisisActive.includes(b.id);
+    // Building background
+    const alpha = 0.15 + (lvl / 100) * 0.35;
+    const resColor = Object.values(RES).find(r => r.key === b.res)?.color || '#ffffff';
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = resColor;
+    ctx.fillRect(x + 2, y + 2, CELL * 2 - 4, CELL * 2 - 4);
+    ctx.globalAlpha = 1;
+    // Border
+    ctx.strokeStyle = isCrisis ? '#ef4444' : (lvl < 30 ? '#f59e0b' : resColor);
+    ctx.lineWidth = isCrisis ? 2.5 : 1.5;
+    ctx.strokeRect(x + 2, y + 2, CELL * 2 - 4, CELL * 2 - 4);
+    ctx.restore();
+    // Icon
+    ctx.font = `${CELL * 0.8}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(b.icon, x + CELL, y + CELL * 0.9);
+    // Level bar
+    const barW = CELL * 2 - 8;
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(x + 4, y + CELL * 1.7, barW, 6);
+    ctx.fillStyle = lvl > 50 ? '#4ade80' : lvl > 25 ? '#fbbf24' : '#ef4444';
+    ctx.fillRect(x + 4, y + CELL * 1.7, barW * (lvl / 100), 6);
+  });
+}
+
+function drawResources() {
+  resources.filter(r => r.active).forEach(r => {
+    const x = cellX(r.col) + CELL / 2;
+    const y = cellY(r.row) + CELL / 2;
+    const color = Object.values(RES).find(res => res.key === r.type)?.color || '#fff';
+    ctx.beginPath();
+    ctx.arc(x, y, CELL * 0.28, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff44';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+}
+
+function drawPlayer() {
+  const x = cellX(player.col) + CELL / 2;
+  const y = cellY(player.row) + CELL / 2;
+  // Glow if carrying
+  if (carrying) {
+    const color = Object.values(RES).find(r => r.key === carrying.type)?.color || '#fff';
+    ctx.save();
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = color;
+    ctx.beginPath();
+    ctx.arc(x, y, CELL * 0.32, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.font = `${CELL * 0.75}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🧑', x, y);
+}
+
+function render() {
+  drawGrid();
+  drawBuildings();
+  drawResources();
+  drawPlayer();
+}
+
+// ─── Meters sidebar ──────────────────────────────────────────
+function renderMeters() {
+  const container = document.getElementById('meters');
+  container.innerHTML = '';
+  buildings.forEach(b => {
+    const lvl = Math.max(0, Math.round(b.level));
+    const color = lvl > 50 ? 'bg-emerald-500' : lvl > 25 ? 'bg-amber-400' : 'bg-red-500';
+    container.innerHTML += `
+      <div>
+        <div class="flex justify-between text-xs mb-0.5">
+          <span class="text-gray-300">${b.icon} ${b.label}</span>
+          <span class="${lvl < 25 ? 'text-red-400 font-bold' : 'text-gray-400'}">${lvl}%</span>
+        </div>
+        <div class="w-full bg-gray-800 rounded-full h-2">
+          <div class="meter-fill h-2 rounded-full ${color}" style="width:${lvl}%"></div>
+        </div>
+      </div>`;
+  });
+}
+
+// ─── Game Logic ──────────────────────────────────────────────
+function getResourceAt(col, row) {
+  return resources.find(r => r.active && r.col === col && r.row === row) || null;
+}
+
+function getBuildingAt(col, row) {
+  return buildings.find(b => (
+    col >= b.col && col < b.col + 2 &&
+    row >= b.row && row < b.row + 2
+  )) || null;
+}
+
+function interact() {
+  if (gameOver) return;
+  const res = getResourceAt(player.col, player.row);
+  const building = getBuildingAt(player.col, player.row);
+
+  if (carrying) {
+    // Try to drop on a building
+    if (building) {
+      const correct = building.res === carrying.type;
+      building.level = Math.min(100, building.level + (correct ? 25 : -10));
+      if (!correct) showCrisisMsg(`Wrong resource for ${building.label}! -10%`, 2000);
+      carrying = null;
+      document.getElementById('carryLabel').textContent = 'nothing';
+    } else {
+      // Drop in place
+      resources.push({ type: carrying.type, col: player.col, row: player.row, id: Date.now(), active: true });
+      carrying = null;
+      document.getElementById('carryLabel').textContent = 'nothing';
+    }
+  } else if (res) {
+    carrying = res;
+    res.active = false;
+    const color = Object.values(RES).find(r => r.key === carrying.type)?.color || '#fff';
+    document.getElementById('carryLabel').innerHTML =
+      `<span style="color:${color}">${RES[carrying.type.toUpperCase()]?.label || carrying.type}</span>`;
+  }
+}
+
+function move(dc, dr) {
+  if (gameOver) return;
+  const nc = player.col + dc;
+  const nr = player.row + dr;
+  if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) {
+    player.col = nc;
+    player.row = nr;
+  }
+}
+
+// ─── Timer & Drain ───────────────────────────────────────────
+let drainInterval;
+const BASE_DRAIN = 0.6; // % per tick
+const TICK_MS = 500;
+
+function tick() {
+  if (gameOver) return;
+  buildings.forEach(b => {
+    const crisisDrain = crisisActive.includes(b.id) ? 2.5 : 0;
+    b.level = Math.max(0, b.level - BASE_DRAIN - crisisDrain);
+  });
+  // Check lose
+  if (buildings.some(b => b.level <= 0)) {
+    endGame(false, buildings.find(b => b.level <= 0));
+  }
+  renderMeters();
+  render();
+}
+
+function startTimer() {
+  const display = document.getElementById('timerDisplay');
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    display.textContent = timeLeft + 's';
+    // Crisis triggers
+    CRISES.forEach(c => {
+      if (timeLeft === c.time) {
+        triggerCrisis(c);
+      }
+    });
+    if (timeLeft <= 0) {
+      endGame(true);
+    }
+  }, 1000);
+}
+
+function triggerCrisis(crisis) {
+  const affectedIds = buildings.filter(b => crisis.targets.includes(b.id)).map(b => b.id);
+  crisisActive.push(...affectedIds);
+  showCrisisMsg(crisis.name + ' ' + crisis.msg, 4000);
+  setTimeout(() => {
+    crisisActive = crisisActive.filter(id => !affectedIds.includes(id));
+  }, crisis.time * 500);
+}
+
+function showCrisisMsg(msg, duration) {
+  const el = document.getElementById('crisisMsg');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), duration);
+}
+
+function endGame(victory, failedBuilding) {
+  gameOver = true;
+  clearInterval(timerInterval);
+  clearInterval(drainInterval);
+  const panel = document.getElementById('gameOverPanel');
+  const title = document.getElementById('gameOverTitle');
+  const msg   = document.getElementById('gameOverMsg');
+  panel.classList.remove('hidden');
+  if (victory) {
+    panel.className = panel.className.replace(/border-\S+/, '') + ' border-emerald-600 bg-emerald-950/30';
+    title.className = 'text-xl font-bold mb-2 text-emerald-400';
+    title.textContent = '🎉 Community Stable!';
+    msg.textContent = 'You kept all 10 buildings running through a health crisis and a blackout. That\'s what an MDF community looks like under pressure.';
+  } else {
+    panel.className = panel.className.replace(/border-\S+/, '') + ' border-red-700 bg-red-950/30';
+    title.className = 'text-xl font-bold mb-2 text-red-400';
+    title.textContent = `💔 ${failedBuilding?.label || 'A building'} collapsed.`;
+    msg.textContent = 'Without the right resources in the right place, even one failure cascades. This is why the roles, the fund allocation, and the participation rate all matter.';
+  }
+  render();
+}
+
+// ─── Keyboard ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','r','R'].includes(e.key)) {
+    e.preventDefault();
+  }
+  switch (e.key) {
+    case 'ArrowUp':    move(0, -1);  break;
+    case 'ArrowDown':  move(0,  1);  break;
+    case 'ArrowLeft':  move(-1, 0);  break;
+    case 'ArrowRight': move(1,  0);  break;
+    case ' ':          interact();   break;
+    case 'r': case 'R': restartGame(); break;
+  }
+});
+
+// ─── Start / Restart ─────────────────────────────────────────
+function restartGame() {
+  clearInterval(timerInterval);
+  clearInterval(drainInterval);
+  document.getElementById('gameOverPanel').classList.add('hidden');
+  document.getElementById('crisisMsg').classList.add('hidden');
+  document.getElementById('timerDisplay').textContent = GAME_DURATION + 's';
+  document.getElementById('carryLabel').textContent = 'nothing';
+  initState();
+  renderMeters();
+  render();
+  drainInterval = setInterval(tick, TICK_MS);
+  startTimer();
+}
+
+restartGame();
+</script>
+</body>
+</html>
