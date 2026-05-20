@@ -16,10 +16,19 @@ const CHART_COLORS = [
   '#74b9ff','#a29bfe','#55efc4','#fab1a0'
 ];
 
+// Registry to track and destroy existing chart instances before redraw
+const chartInstances = {};
+
 function makeChart(id, type, labels, datasets, options = {}) {
-  const ctx = document.getElementById(id)?.getContext('2d');
-  if (!ctx) return;
-  new Chart(ctx, {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  // Destroy existing instance if present
+  if (chartInstances[id]) {
+    chartInstances[id].destroy();
+    delete chartInstances[id];
+  }
+  const ctx = canvas.getContext('2d');
+  chartInstances[id] = new Chart(ctx, {
     type,
     data: { labels, datasets },
     options: {
@@ -38,6 +47,11 @@ function makeChart(id, type, labels, datasets, options = {}) {
   });
 }
 
+// ---- Build a Supabase query filtered by community if needed ----
+function filtered(query, communityId) {
+  return communityId !== 'all' ? query.eq('community_id', communityId) : query;
+}
+
 // ---- Load Communities into Selector ----
 async function loadCommunitySelector() {
   const { data } = await supabase.from('civic_communities').select('id, name, city, state').order('name');
@@ -54,14 +68,18 @@ async function loadCommunitySelector() {
 
 // ---- KPIs ----
 async function loadKPIs(communityId) {
-  const filter = communityId !== 'all';
+  const isFiltered = communityId !== 'all';
+
+  const communitiesQuery = isFiltered
+    ? supabase.from('civic_communities').select('id', { count: 'exact', head: true }).eq('id', communityId)
+    : supabase.from('civic_communities').select('id', { count: 'exact', head: true });
 
   const [communities, budget, allocations, outcomes, roads] = await Promise.all([
-    supabase.from('civic_communities').select('id', { count: 'exact', head: true }),
-    supabase.from('civic_budget_sources').select('amount_collected').then(r => r.data),
-    supabase.from('civic_allocations').select('amount_allocated').then(r => r.data),
-    supabase.from('civic_outcomes').select('id', { count: 'exact', head: true }),
-    supabase.from('road_segments').select('id', { count: 'exact', head: true }),
+    communitiesQuery,
+    filtered(supabase.from('civic_budget_sources').select('amount_collected'), communityId).then(r => r.data),
+    filtered(supabase.from('civic_allocations').select('amount_allocated'), communityId).then(r => r.data),
+    filtered(supabase.from('civic_outcomes').select('id', { count: 'exact', head: true }), communityId),
+    filtered(supabase.from('road_segments').select('id', { count: 'exact', head: true }), communityId),
   ]);
 
   const totalCollected = (budget || []).reduce((s, r) => s + Number(r.amount_collected || 0), 0);
@@ -75,8 +93,8 @@ async function loadKPIs(communityId) {
 }
 
 // ---- Budget Sources Chart ----
-async function loadBudgetSourcesChart() {
-  const { data } = await supabase.from('civic_budget_sources').select('source_type, amount_collected');
+async function loadBudgetSourcesChart(communityId) {
+  const { data } = await filtered(supabase.from('civic_budget_sources').select('source_type, amount_collected'), communityId);
   if (!data?.length) return;
   const grouped = {};
   data.forEach(r => {
@@ -94,8 +112,8 @@ async function loadBudgetSourcesChart() {
 }
 
 // ---- Spending by Category ----
-async function loadSpendingCategoryChart() {
-  const { data } = await supabase.from('civic_allocations').select('category, amount_allocated');
+async function loadSpendingCategoryChart(communityId) {
+  const { data } = await filtered(supabase.from('civic_allocations').select('category, amount_allocated'), communityId);
   if (!data?.length) return;
   const grouped = {};
   data.forEach(r => {
@@ -113,8 +131,8 @@ async function loadSpendingCategoryChart() {
 }
 
 // ---- Allocation vs Spent Bar Chart ----
-async function loadAllocationVsSpentChart() {
-  const { data } = await supabase.from('civic_allocations').select('category, amount_allocated, amount_spent');
+async function loadAllocationVsSpentChart(communityId) {
+  const { data } = await filtered(supabase.from('civic_allocations').select('category, amount_allocated, amount_spent'), communityId);
   if (!data?.length) return;
   const grouped = {};
   data.forEach(r => {
@@ -143,8 +161,8 @@ async function loadAllocationVsSpentChart() {
 }
 
 // ---- Outcome Status Doughnut ----
-async function loadOutcomeStatusChart() {
-  const { data } = await supabase.from('civic_outcomes').select('outcome_status');
+async function loadOutcomeStatusChart(communityId) {
+  const { data } = await filtered(supabase.from('civic_outcomes').select('outcome_status'), communityId);
   if (!data?.length) return;
   const counts = {};
   data.forEach(r => {
@@ -161,8 +179,11 @@ async function loadOutcomeStatusChart() {
 }
 
 // ---- Road Condition Histogram ----
-async function loadRoadConditionChart() {
-  const { data } = await supabase.from('road_segments').select('condition_score').not('condition_score', 'is', null);
+async function loadRoadConditionChart(communityId) {
+  const { data } = await filtered(
+    supabase.from('road_segments').select('condition_score').not('condition_score', 'is', null),
+    communityId
+  );
   if (!data?.length) return;
   const buckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
   data.forEach(r => {
@@ -182,8 +203,8 @@ async function loadRoadConditionChart() {
 }
 
 // ---- MDF vs Gov Comparison Charts ----
-async function loadModelComparisonCharts() {
-  const { data } = await supabase.from('civic_allocations').select('category, amount_allocated');
+async function loadModelComparisonCharts(communityId) {
+  const { data } = await filtered(supabase.from('civic_allocations').select('category, amount_allocated'), communityId);
   if (!data?.length) return;
 
   const govGrouped = {};
@@ -226,42 +247,16 @@ async function loadModelComparisonCharts() {
   );
 }
 
-// ---- Evidence Feed ----
-async function loadEvidenceFeed() {
-  const { data } = await supabase
-    .from('civic_evidence')
-    .select('title, description, evidence_type, status, location_label')
-    .order('created_at', { ascending: false })
-    .limit(12);
-
-  const feed = document.getElementById('evidence-feed');
-  if (!data?.length) {
-    feed.innerHTML = '<p class="loading-msg">No evidence records found yet. Be the first to submit.</p>';
-    return;
-  }
-
-  feed.innerHTML = data.map(e => `
-    <div class="evidence-card">
-      <span class="ev-type">${e.evidence_type?.replace(/_/g, ' ') || 'observation'}</span>
-      <div class="ev-title">${e.title}</div>
-      ${e.location_label ? `<div class="ev-desc" style="color:#74b9ff;font-size:0.75rem;">📍 ${e.location_label}</div>` : ''}
-      <div class="ev-desc">${e.description || ''}</div>
-      <div class="ev-status ${e.status}">${e.status}</div>
-    </div>
-  `).join('');
-}
-
 // ---- Master Load ----
 async function loadDashboard(communityId = 'all') {
   await Promise.all([
     loadKPIs(communityId),
-    loadBudgetSourcesChart(),
-    loadSpendingCategoryChart(),
-    loadAllocationVsSpentChart(),
-    loadOutcomeStatusChart(),
-    loadRoadConditionChart(),
-    loadModelComparisonCharts(),
-    loadEvidenceFeed(),
+    loadBudgetSourcesChart(communityId),
+    loadSpendingCategoryChart(communityId),
+    loadAllocationVsSpentChart(communityId),
+    loadOutcomeStatusChart(communityId),
+    loadRoadConditionChart(communityId),
+    loadModelComparisonCharts(communityId),
   ]);
 }
 
