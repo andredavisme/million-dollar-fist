@@ -56,12 +56,21 @@ See all model sources: [src/data/model-assumptions.js](src/data/model-assumption
 
 ## Platform Goals
 
-- [ ] Philosophy education module
-- [ ] Government vs. community model comparison
-- [ ] Interactive distribution calculator
-- [ ] Community data visualizations
+- [x] Philosophy education module (`how-it-works.html`)
+- [x] Government vs. community model comparison (`compare-cities.html`)
+- [x] Interactive distribution calculator (`calculator.html`)
+- [x] Community data visualizations (`dashboard.html`)
 - [ ] User accounts and community registration
 - [ ] Disbursement tracking dashboard
+
+## Open Research Items
+
+The following model levers are currently set as conservative modeled estimates. They should be updated when empirical sources are identified:
+
+- **Capital Outlay Deferral (3%)** — no direct citation for municipal-level community maintenance offset
+- **Debt Service Reduction (2%)** — no direct citation for participatory budgeting impact on debt financing reliance
+
+See [`src/data/model-assumptions.js`](src/data/model-assumptions.js) for full source details.
 
 ## Tech Stack
 
@@ -91,6 +100,18 @@ million-dollar-fist/
 ```
 
 > **Note:** The `docs/` directory is automatically synced from `src/` by the deploy workflow. Do not edit files in `docs/` directly — changes will be overwritten. All source edits belong in `src/`.
+
+## Changelog
+
+### 2026-05-20 — Data Integrity Sprint
+- Added `src/data/model-assumptions.js` as single source of truth for all model lever defaults and cited sources
+- Corrected budget split assumptions from 25/20/15/10 to 15/10/10/4 based on Urban Institute data
+- Updated `src/data/calculator.js` defaults to match sourced research values
+- Added `src/data-integrity.md`: formal data integrity policy codifying the truth-first principle
+- Added Methodology section to `how-it-works.html` with per-lever source attribution and research vs. estimate badges
+- Added inline projection disclosures to `calculator.html` and `compare-cities.html`
+- Fixed CI workflow race condition (`git pull --rebase` before push)
+- Added Get Started page and organizer toolkit
 
 ## Supabase Project
 
