@@ -33,10 +33,8 @@
     </div>
   </div>
 
-  <!-- Canvas fills remaining space between HUD and finger pad -->
   <canvas id="gameCanvas" class="grow block"></canvas>
 
-  <!-- Finger pad -->
   <div class="shrink-0 bg-gray-950/95 border-t border-gray-800 px-4 pt-2 pb-3">
     <div class="flex items-center justify-between text-[10px] text-gray-500 uppercase tracking-widest mb-1">
       <span>← Move left/right →</span>
@@ -49,7 +47,6 @@
     </div>
   </div>
 
-  <!-- Overlay -->
   <div id="overlay" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-6">
     <div id="overlayCard" class="rounded-2xl border p-7 max-w-sm w-full text-center">
       <div id="overlayIcon" class="text-5xl mb-3"></div>
@@ -60,9 +57,7 @@
   </div>
 
 <script>
-// ── Layout: canvas fills available viewport space ─────────────────────
 const canvas = document.getElementById('gameCanvas');
-
 function resizeCanvas() {
   canvas.width  = canvas.clientWidth  || window.innerWidth;
   canvas.height = canvas.clientHeight || (window.innerHeight - 120);
@@ -72,22 +67,19 @@ resizeCanvas();
 const CANVAS_W = () => canvas.width;
 const CANVAS_H = () => canvas.height;
 
-// ── Constants ─────────────────────────────────────────────────────────
 const STREET_W    = 36;
 const BLOCK_H     = 220;
 const BUILDING_W  = 70;
 const BUILDING_H  = 60;
 const RESOURCE_R  = 13;
-const DOOR_RANGE  = 32;
-const PICKUP_RANGE= 26;
-const SCROLL_SPEED= 1.4;   // px per frame
+const DOOR_RANGE  = 36;
+const PICKUP_RANGE= 30;
+const SCROLL_SPEED= 1.4;
 const MAX_CARRY   = 2;
-// Player sits at 70% down the visible canvas — always visible
-const PLAYER_SCREEN_Y_FRAC = 0.70;
-// Drain: buildings start at 65–75%, drain ~0.008%/frame → ~8%/60s at 60fps
+// Avatar sits at 35% down — upper half of canvas, more road ahead visible
+const PLAYER_SCREEN_Y_FRAC = 0.35;
 const DRAIN_NORMAL  = 0.008;
 const DRAIN_CRISIS  = 0.04;
-// First crisis not before block 8 (~60s at current speed)
 const FIRST_CRISIS_BLOCK = 8;
 
 const RESOURCES = [
@@ -118,41 +110,48 @@ const CRISIS_EVENTS = [
   { name: '⚡ Blackout!',        targets: ['emergency','kitchen','delivery'] },
 ];
 
-// ── State ─────────────────────────────────────────────────────────────
 const ctx = canvas.getContext('2d');
-let worldY = 0;       // world offset: how far we've scrolled
+let worldY = 0;
 let resources = [], buildings = [];
-let player = { x: 0, screenY: 0 };  // screenY is always CANVAS_H * PLAYER_SCREEN_Y_FRAC
+let player = { x: 0, screenY: 0 };
 let inventory = [];
 let score = 0, gameOver = false, animFrame;
 let crisisActive = {}, milestonePassed = new Set();
 let buildingDefIdx = 0, generatedTo = 0;
 let blocksTraveled = 0, nextCrisisBlock = FIRST_CRISIS_BLOCK, crisisIdx = 0;
 let sliderValue = 0.5;
+let depositCooldown = 0;
 const MIN_PX = 18;
 const STREET_X = () => [CANVAS_W() * 0.28, CANVAS_W() * 0.68];
 const MAX_PX = () => CANVAS_W() - 18;
 
-// player.worldY = worldY + player.screenY
 function playerWorldY() { return worldY + player.screenY; }
 
-// ── World generation ──────────────────────────────────────────────────
 function generateChunk(startY) {
-  const CW = CANVAS_W();
   const [sx0, sx1] = STREET_X();
   const lb = BUILDING_DEFS[buildingDefIdx++ % BUILDING_DEFS.length];
   const rb = BUILDING_DEFS[buildingDefIdx++ % BUILDING_DEFS.length];
   const by = startY + BLOCK_H * 0.3;
 
-  buildings.push({ id: lb.id+'_'+startY, def:lb, x: sx0-STREET_W/2-BUILDING_W-4, worldY:by, w:BUILDING_W, h:BUILDING_H, level:65+Math.random()*20, doorSide:'right' });
-  buildings.push({ id: rb.id+'_'+startY, def:rb, x: sx1+STREET_W/2+4,            worldY:by, w:BUILDING_W, h:BUILDING_H, level:65+Math.random()*20, doorSide:'left'  });
+  buildings.push({ id:lb.id+'_'+startY, def:lb, x:sx0-STREET_W/2-BUILDING_W-4, worldY:by, w:BUILDING_W, h:BUILDING_H, level:65+Math.random()*20, doorSide:'right' });
+  buildings.push({ id:rb.id+'_'+startY, def:rb, x:sx1+STREET_W/2+4,            worldY:by, w:BUILDING_W, h:BUILDING_H, level:65+Math.random()*20, doorSide:'left' });
+
+  // Spawn resources in the MEDIAN between the two streets
+  const medianLeft  = sx0 + STREET_W / 2 + 6;
+  const medianRight = sx1 - STREET_W / 2 - 6;
+  const medianW = medianRight - medianLeft;
 
   const n = 2 + Math.floor(Math.random() * 2);
   for (let i = 0; i < n; i++) {
     const res = RESOURCES[Math.floor(Math.random() * RESOURCES.length)];
-    const side = Math.random() < 0.5 ? 0 : 1;
-    const sx = side===0 ? sx0-STREET_W/2-18-Math.random()*18 : sx1+STREET_W/2+18+Math.random()*18;
-    resources.push({ id:'r'+startY+'_'+i, type:res.key, color:res.color, emoji:res.emoji, x:sx, worldY:startY+BLOCK_H*(0.2+Math.random()*0.6), active:true });
+    const rx = medianLeft + Math.random() * medianW;
+    resources.push({
+      id:'r'+startY+'_'+i,
+      type:res.key, color:res.color, emoji:res.emoji,
+      x: rx,
+      worldY: startY + BLOCK_H * (0.15 + Math.random() * 0.7),
+      active: true,
+    });
   }
   generatedTo = startY + BLOCK_H;
 }
@@ -162,11 +161,10 @@ function ensureGenerated() {
   while (generatedTo < need) generateChunk(generatedTo);
 }
 
-// ── Draw ──────────────────────────────────────────────────────────────
 function toScreen(wy) { return wy - worldY; }
 
 function drawStreets() {
-  const CW = CANVAS_W(), CH = CANVAS_H();
+  const CH = CANVAS_H();
   STREET_X().forEach(sx => {
     ctx.fillStyle = '#1f2937';
     ctx.fillRect(sx - STREET_W/2, 0, STREET_W, CH);
@@ -174,16 +172,37 @@ function drawStreets() {
     ctx.strokeStyle = '#374151'; ctx.lineWidth = 1.5;
     ctx.beginPath();
     const off = (worldY * 0.5) % 22;
-    ctx.moveTo(sx, -off); ctx.lineTo(sx, CH + 22);
+    ctx.moveTo(sx, -off); ctx.lineTo(sx, CH+22);
     ctx.stroke(); ctx.setLineDash([]);
   });
+}
+
+function drawMedian() {
+  // Subtle median strip highlight so player knows items live here
+  const [sx0, sx1] = STREET_X();
+  const mx = sx0 + STREET_W/2;
+  const mw = sx1 - STREET_W/2 - mx;
+  const CH = CANVAS_H();
+  ctx.save();
+  ctx.globalAlpha = 0.06;
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(mx, 0, mw, CH);
+  ctx.globalAlpha = 1;
+  // Dotted center line
+  ctx.setLineDash([6, 14]);
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  const cx = mx + mw/2;
+  const off = (worldY * 0.3) % 20;
+  ctx.beginPath(); ctx.moveTo(cx, -off); ctx.lineTo(cx, CH+20);
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.restore();
 }
 
 function drawBuildings() {
   const CH = CANVAS_H();
   buildings.forEach(b => {
     const sy = toScreen(b.worldY);
-    if (sy > CH + 20 || sy + b.h < -20) return;
+    if (sy > CH+20 || sy+b.h < -20) return;
     const isCrisis = crisisActive[b.id];
     const lvl = Math.max(0, b.level);
     const res = RESOURCES.find(r => r.key === b.def.res);
@@ -193,20 +212,19 @@ function drawBuildings() {
     ctx.fillStyle = col;
     ctx.beginPath(); ctx.roundRect(b.x, sy, b.w, b.h, 6); ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = isCrisis ? '#ef4444' : (lvl < 30 ? '#f59e0b' : col+'bb');
+    ctx.strokeStyle = isCrisis ? '#ef4444' : (lvl<30 ? '#f59e0b' : col+'bb');
     ctx.lineWidth = isCrisis ? 2.5 : 1.5;
     ctx.beginPath(); ctx.roundRect(b.x, sy, b.w, b.h, 6); ctx.stroke();
     ctx.restore();
     ctx.font = '20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(b.def.emoji, b.x + b.w/2, sy + b.h*0.38);
-    // level bar
+    ctx.fillText(b.def.emoji, b.x+b.w/2, sy+b.h*0.38);
     const bx = b.x+4, bw = b.w-8;
     ctx.fillStyle = '#111827'; ctx.fillRect(bx, sy+b.h-10, bw, 6);
     ctx.fillStyle = lvl>50?'#4ade80':lvl>25?'#fbbf24':'#ef4444';
     ctx.fillRect(bx, sy+b.h-10, bw*(lvl/100), 6);
-    // door dot
     const doorX = b.doorSide==='right' ? b.x+b.w : b.x;
-    ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(doorX, sy+b.h/2, 5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath(); ctx.arc(doorX, sy+b.h/2, 5, 0, Math.PI*2); ctx.fill();
   });
 }
 
@@ -227,7 +245,7 @@ function drawResources() {
 function drawPlayer() {
   const sy = player.screenY;
   if (inventory.length > 0) {
-    const col = RESOURCES.find(r => r.key === inventory[0].type)?.color || '#fff';
+    const col = RESOURCES.find(r => r.key===inventory[0].type)?.color || '#fff';
     ctx.save(); ctx.shadowBlur = 18; ctx.shadowColor = col;
     ctx.beginPath(); ctx.arc(player.x, sy, 17, 0, Math.PI*2);
     ctx.strokeStyle = col+'88'; ctx.lineWidth = 2; ctx.stroke();
@@ -241,7 +259,7 @@ function drawCrisisBanner() {
   const msgs = [...new Set(Object.values(crisisActive).filter(Boolean))];
   if (!msgs.length) return;
   const CW = CANVAS_W();
-  ctx.save(); ctx.globalAlpha = 0.85;
+  ctx.save(); ctx.globalAlpha = 0.88;
   ctx.fillStyle = '#7f1d1d'; ctx.fillRect(0, 0, CW, 26);
   ctx.globalAlpha = 1;
   ctx.fillStyle = '#fca5a5'; ctx.font = 'bold 11px sans-serif';
@@ -253,15 +271,19 @@ function drawCrisisBanner() {
 function render() {
   const CW = CANVAS_W(), CH = CANVAS_H();
   ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, CW, CH);
-  drawStreets(); drawBuildings(); drawResources(); drawPlayer(); drawCrisisBanner();
+  drawStreets();
+  drawMedian();
+  drawBuildings();
+  drawResources();
+  drawPlayer();
+  drawCrisisBanner();
 }
 
-// ── Inventory UI ──────────────────────────────────────────────────────
 function updateInventoryUI() {
   for (let i = 0; i < 2; i++) {
     const slot = document.getElementById('slot'+i);
     if (inventory[i]) {
-      const res = RESOURCES.find(r => r.key === inventory[i].type);
+      const res = RESOURCES.find(r => r.key===inventory[i].type);
       slot.style.borderColor = res.color;
       slot.style.background = res.color+'33';
       slot.textContent = res.emoji;
@@ -273,7 +295,6 @@ function updateInventoryUI() {
   }
 }
 
-// ── Finger pad ────────────────────────────────────────────────────────
 function updateFingerPad() {
   const pad = document.getElementById('fingerPad');
   const knob = document.getElementById('fingerKnob');
@@ -297,9 +318,6 @@ function setSliderFromX(clientX) {
   }, { passive:false });
 });
 
-// ── Pickup / deposit ──────────────────────────────────────────────────
-let depositCooldown = 0;
-
 function tryPickup() {
   if (inventory.length >= MAX_CARRY) return;
   const py = playerWorldY(), px = player.x;
@@ -317,16 +335,16 @@ function tryDeposit() {
   for (let b of buildings) {
     const doorX = b.doorSide==='right' ? b.x+b.w : b.x;
     if (Math.hypot(doorX-px, b.worldY+b.h/2-py) < DOOR_RANGE) {
-      const mi = inventory.findIndex(i => i.type === b.def.res);
+      const mi = inventory.findIndex(i => i.type===b.def.res);
       if (mi >= 0) {
         inventory.splice(mi, 1);
-        b.level = Math.min(100, b.level + 28);
+        b.level = Math.min(100, b.level+28);
         score += 2;
         document.getElementById('scoreDisplay').textContent = score;
         updateInventoryUI();
-        depositCooldown = 60; // 1s cooldown prevents spam
+        depositCooldown = 60;
       } else {
-        b.level = Math.max(0, b.level - 8);
+        b.level = Math.max(0, b.level-8);
         const it = inventory.shift();
         resources.push({ ...it, active:true, worldY:py+20, x:px+25, id:'d'+Date.now() });
         updateInventoryUI();
@@ -337,11 +355,10 @@ function tryDeposit() {
   }
 }
 
-// ── Crisis & milestones ───────────────────────────────────────────────
 function checkCrisis(blocks) {
   if (blocks < nextCrisisBlock) return;
   const c = CRISIS_EVENTS[crisisIdx++ % CRISIS_EVENTS.length];
-  nextCrisisBlock = blocks + 5 + Math.floor(Math.random() * 4);
+  nextCrisisBlock = blocks + 5 + Math.floor(Math.random()*4);
   buildings.forEach(b => { if (c.targets.includes(b.def.id)) crisisActive[b.id] = c.name; });
   const clearMs = (BLOCK_H / SCROLL_SPEED) * 3 * (1000/60);
   setTimeout(() => buildings.forEach(b => { if (crisisActive[b.id]===c.name) delete crisisActive[b.id]; }), clearMs);
@@ -395,16 +412,15 @@ function triggerGameOver(b) {
   document.getElementById('overlayTitle').textContent = b.def.label+' collapsed.';
   document.getElementById('overlayMsg').textContent = `${score} block${score!==1?'s':''} traveled. One collapse cascades. This is why allocation matters.`;
   const btn = document.getElementById('overlayBtn');
-  btn.textContent = 'Run Again'; btn.onclick = () => { document.getElementById('overlay').classList.add('hidden'); initGame(); };
+  btn.textContent = 'Run Again';
+  btn.onclick = () => { document.getElementById('overlay').classList.add('hidden'); initGame(); };
   document.getElementById('overlay').classList.remove('hidden');
 }
 
-// ── Game loop ─────────────────────────────────────────────────────────
 function loop() {
   if (gameOver) return;
   worldY += SCROLL_SPEED;
   player.screenY = CANVAS_H() * PLAYER_SCREEN_Y_FRAC;
-
   if (depositCooldown > 0) depositCooldown--;
 
   const newBlocks = Math.floor(worldY / BLOCK_H);
@@ -418,14 +434,13 @@ function loop() {
 
   buildings.forEach(b => {
     const sy = toScreen(b.worldY);
-    if (sy < -BUILDING_H || sy > CANVAS_H() + BUILDING_H) return;
+    if (sy < -BUILDING_H || sy > CANVAS_H()+BUILDING_H) return;
     const drain = crisisActive[b.id] ? DRAIN_CRISIS : DRAIN_NORMAL;
     b.level -= drain;
     if (b.level <= 0) { b.level = 0; triggerGameOver(b); }
   });
 
-  tryPickup();
-  tryDeposit();
+  tryPickup(); tryDeposit();
 
   const cullY = worldY - BLOCK_H;
   resources = resources.filter(r => r.worldY > cullY);
@@ -436,7 +451,6 @@ function loop() {
   animFrame = requestAnimationFrame(loop);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────
 function initGame() {
   worldY = 0; resources = []; buildings = [];
   player = { x: CANVAS_W()/2, screenY: CANVAS_H()*PLAYER_SCREEN_Y_FRAC };
@@ -445,9 +459,7 @@ function initGame() {
   crisisActive = {}; buildingDefIdx = 0; generatedTo = 0;
   milestonePassed = new Set(); sliderValue = 0.5; depositCooldown = 0;
   document.getElementById('scoreDisplay').textContent = '0';
-  updateInventoryUI();
-  ensureGenerated();
-  updateFingerPad();
+  updateInventoryUI(); ensureGenerated(); updateFingerPad();
   cancelAnimationFrame(animFrame);
   animFrame = requestAnimationFrame(loop);
 }
