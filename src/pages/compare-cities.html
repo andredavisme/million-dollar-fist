@@ -6,7 +6,6 @@
   <title>Compare Cities — Million Dollar Fist</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Bring in MDF header/nav styles without importing the full CSS */
     :root {
       --color-primary: #1a1a2e;
       --color-accent: #e94560;
@@ -78,13 +77,11 @@
 
   <div class="max-w-6xl mx-auto px-4 py-10">
 
-    <!-- Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-white">MDF Compare</h1>
       <p class="text-gray-400 mt-1">Actual municipal finance vs. what changes when community participation is introduced.</p>
     </div>
 
-    <!-- Controls -->
     <div class="flex flex-wrap gap-4 mb-8">
       <div>
         <label class="block text-xs text-gray-400 mb-1">City</label>
@@ -104,19 +101,12 @@
       </div>
     </div>
 
-    <!-- Data Status Banner -->
     <div id="statusBanner" class="hidden mb-6 p-4 rounded-lg border"></div>
 
-    <!-- Results -->
     <div id="compareResults" class="hidden">
-
-      <!-- City Header -->
       <div id="cityHeader" class="mb-6"></div>
-
-      <!-- Scenario Cards -->
       <div id="scenarioCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
 
-      <!-- Submit Verified Data CTA -->
       <div id="verifiedDataCTA" class="hidden mt-8 p-6 rounded-xl border border-dashed border-amber-500 bg-amber-950/30">
         <div class="flex items-start gap-4">
           <span class="text-2xl">&#x1F4CB;</span>
@@ -128,9 +118,7 @@
               or a checkbook export for this municipality, you can submit it to replace the model with verified numbers.
             </p>
             <div class="flex flex-wrap gap-2">
-              <button onclick="openSubmitForm()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm font-medium transition">
-                Submit Verified Data
-              </button>
+              <button onclick="openSubmitForm()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm font-medium transition">Submit Verified Data</button>
               <a href="https://www.maine.gov/treasurer/" target="_blank" class="border border-amber-600 text-amber-400 hover:text-amber-300 px-4 py-2 rounded text-sm transition">ME State Treasurer &nearr;</a>
               <a href="https://data.ohio.gov/wps/portal/gov/data/view/ohio-checkbook" target="_blank" class="border border-amber-600 text-amber-400 hover:text-amber-300 px-4 py-2 rounded text-sm transition">OH Checkbook &nearr;</a>
               <a href="https://www.mass.gov/orgs/division-of-local-services" target="_blank" class="border border-amber-600 text-amber-400 hover:text-amber-300 px-4 py-2 rounded text-sm transition">MA DLS &nearr;</a>
@@ -138,28 +126,20 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Submit Verified Data Modal -->
   <div id="submitModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
     <div class="bg-gray-900 border border-gray-700 rounded-xl max-w-lg w-full p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-semibold">Submit Verified Data</h2>
         <button onclick="closeSubmitForm()" class="text-gray-400 hover:text-white text-xl">&times;</button>
       </div>
-      <p class="text-sm text-gray-400 mb-4">
-        Provide your contact info and the data source. The 207 Analytix team will validate and replace the model
-        assumptions with your verified figures within 48 hours.
-      </p>
+      <p class="text-sm text-gray-400 mb-4">Provide your contact info and the data source. The 207 Analytix team will validate and replace the model assumptions with your verified figures within 48 hours.</p>
       <form id="submitForm" class="space-y-3">
-        <input id="submitterName" type="text" placeholder="Your name" required
-          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
-        <input id="submitterEmail" type="email" placeholder="Email address" required
-          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
-        <input id="dataSourceUrl" type="url" placeholder="Source URL (checkbook, budget doc, audit, etc.)"
-          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+        <input id="submitterName" type="text" placeholder="Your name" required class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+        <input id="submitterEmail" type="email" placeholder="Email address" required class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+        <input id="dataSourceUrl" type="url" placeholder="Source URL (checkbook, budget doc, audit, etc.)" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
         <select id="sourceType" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white">
           <option value="checkbook_export">Checkbook export (CSV)</option>
           <option value="budget_document">Budget document</option>
@@ -167,17 +147,10 @@
           <option value="state_filing">State filing</option>
           <option value="other">Other</option>
         </select>
-        <textarea id="dataNotes" rows="3"
-          placeholder="Notes — fiscal year covered, what the data includes, any caveats"
-          class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"></textarea>
-        <button type="submit"
-          class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded text-sm font-medium transition">
-          Submit for Review
-        </button>
+        <textarea id="dataNotes" rows="3" placeholder="Notes — fiscal year covered, what the data includes, any caveats" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"></textarea>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded text-sm font-medium transition">Submit for Review</button>
       </form>
-      <p id="submitConfirm" class="hidden text-emerald-400 text-sm mt-3 text-center">
-        &#x2713; Submitted &mdash; we'll follow up within 48 hours.
-      </p>
+      <p id="submitConfirm" class="hidden text-emerald-400 text-sm mt-3 text-center">&#x2713; Submitted &mdash; we'll follow up within 48 hours.</p>
     </div>
   </div>
 
@@ -228,7 +201,6 @@ async function loadCompare() {
 
 function renderCompare(data) {
   document.getElementById("compareResults").classList.remove("hidden");
-
   const m = data.municipality;
   document.getElementById("cityHeader").innerHTML = `
     <div class="flex items-baseline gap-3 flex-wrap">
@@ -241,77 +213,44 @@ function renderCompare(data) {
   const banner = document.getElementById("statusBanner");
   if (data.data_status.assumptions_are_modeled) {
     banner.className = "mb-6 p-4 rounded-lg border border-amber-600 bg-amber-950/40 text-amber-200 text-sm";
-    banner.innerHTML = `<strong>&#x26A0; Model Estimates Active</strong> &mdash; No verified checkbook data has been loaded for
-      <strong>${m.name} FY${data.fiscal_year}</strong>. The figures below use <strong>population-scaled MDF assumptions</strong>,
-      not sourced financials. They show relative impact, not absolute dollar accuracy.`;
+    banner.innerHTML = `<strong>&#x26A0; Model Estimates Active</strong> &mdash; No verified checkbook data has been loaded for <strong>${m.name} FY${data.fiscal_year}</strong>. The figures below use <strong>population-scaled MDF assumptions</strong>, not sourced financials.`;
     document.getElementById("verifiedDataCTA").classList.remove("hidden");
   } else {
     banner.className = "mb-6 p-4 rounded-lg border border-emerald-600 bg-emerald-950/40 text-emerald-200 text-sm";
-    banner.innerHTML = `<strong>&#x2713; Verified Data</strong> &mdash; Revenue and expenditure data for
-      <strong>${m.name} FY${data.fiscal_year}</strong> is sourced from official checkbook records.`;
+    banner.innerHTML = `<strong>&#x2713; Verified Data</strong> &mdash; Revenue and expenditure data for <strong>${m.name} FY${data.fiscal_year}</strong> is sourced from official checkbook records.`;
     document.getElementById("verifiedDataCTA").classList.add("hidden");
   }
   banner.classList.remove("hidden");
 
   const container = document.getElementById("scenarioCards");
   container.innerHTML = "";
-
   if (!data.assumptions || data.assumptions.length === 0) {
     container.innerHTML = `<p class="text-gray-500 col-span-3">No published scenarios found for this city and year.</p>`;
     return;
   }
-
   const isModeled = data.data_status.assumptions_are_modeled;
-
   data.assumptions.forEach(a => {
     const badge = isModeled
       ? `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">&#x26A0; Modeled estimate</span>`
       : `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">&#x2713; Verified data</span>`;
-
     const pct = a.participation_rate_pct != null ? `${(a.participation_rate_pct * 100).toFixed(0)}%` : "—";
     const jobs = a.community_jobs_created?.toLocaleString() ?? "—";
-    const dollars = a.dollars_circulated_locally != null
-      ? `$${(a.dollars_circulated_locally / 1_000_000).toFixed(2)}M` : "—";
+    const dollars = a.dollars_circulated_locally != null ? `$${(a.dollars_circulated_locally / 1_000_000).toFixed(2)}M` : "—";
     const revenueUplift = a.revenue_uplift_pct != null ? `+${(a.revenue_uplift_pct * 100).toFixed(0)}%` : "—";
     const safetyDelta = a.safety_spend_reduction_pct != null ? `-${(a.safety_spend_reduction_pct * 100).toFixed(0)}%` : "—";
     const hsDelta = a.hs_spend_reduction_pct != null ? `-${(a.hs_spend_reduction_pct * 100).toFixed(0)}%` : "—";
-
     container.innerHTML += `
       <div class="bg-gray-900 border border-gray-700 rounded-xl p-5 flex flex-col gap-4">
-        <div class="flex justify-between items-start gap-2">
-          <h3 class="font-semibold text-white">${a.scenario_name}</h3>
-          ${badge}
-        </div>
+        <div class="flex justify-between items-start gap-2"><h3 class="font-semibold text-white">${a.scenario_name}</h3>${badge}</div>
         <div class="grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <p class="text-gray-400 text-xs mb-0.5">Community Participation</p>
-            <p class="text-lg font-bold text-blue-400">${pct}</p>
-          </div>
-          <div>
-            <p class="text-gray-400 text-xs mb-0.5">Local Jobs Created</p>
-            <p class="text-lg font-bold text-emerald-400">${jobs}</p>
-          </div>
-          <div>
-            <p class="text-gray-400 text-xs mb-0.5">$ Circulated Locally</p>
-            <p class="text-lg font-bold text-emerald-400">${dollars}</p>
-          </div>
-          <div>
-            <p class="text-gray-400 text-xs mb-0.5">Revenue Uplift</p>
-            <p class="text-lg font-bold text-blue-400">${revenueUplift}</p>
-          </div>
-          <div>
-            <p class="text-gray-400 text-xs mb-0.5">Safety Spend &Delta;</p>
-            <p class="text-lg font-bold text-orange-400">${safetyDelta}</p>
-          </div>
-          <div>
-            <p class="text-gray-400 text-xs mb-0.5">Health/HS Spend &Delta;</p>
-            <p class="text-lg font-bold text-orange-400">${hsDelta}</p>
-          </div>
+          <div><p class="text-gray-400 text-xs mb-0.5">Community Participation</p><p class="text-lg font-bold text-blue-400">${pct}</p></div>
+          <div><p class="text-gray-400 text-xs mb-0.5">Local Jobs Created</p><p class="text-lg font-bold text-emerald-400">${jobs}</p></div>
+          <div><p class="text-gray-400 text-xs mb-0.5">$ Circulated Locally</p><p class="text-lg font-bold text-emerald-400">${dollars}</p></div>
+          <div><p class="text-gray-400 text-xs mb-0.5">Revenue Uplift</p><p class="text-lg font-bold text-blue-400">${revenueUplift}</p></div>
+          <div><p class="text-gray-400 text-xs mb-0.5">Safety Spend &Delta;</p><p class="text-lg font-bold text-orange-400">${safetyDelta}</p></div>
+          <div><p class="text-gray-400 text-xs mb-0.5">Health/HS Spend &Delta;</p><p class="text-lg font-bold text-orange-400">${hsDelta}</p></div>
         </div>
-        ${isModeled ? `<p class="text-xs text-amber-600/80 border-t border-gray-800 pt-3">
-          Assumptions scaled from population-based MDF model.
-          <button onclick="openSubmitForm()" class="underline text-amber-500 hover:text-amber-400">Submit verified data</button> to replace.
-        </p>` : ""}
+        ${isModeled ? `<p class="text-xs text-amber-600/80 border-t border-gray-800 pt-3">Assumptions scaled from population-based MDF model. <button onclick="openSubmitForm()" class="underline text-amber-500 hover:text-amber-400">Submit verified data</button> to replace.</p>` : ""}
       </div>`;
   });
 }
@@ -321,9 +260,7 @@ function openSubmitForm() {
   document.getElementById("submitConfirm").classList.add("hidden");
   document.getElementById("submitModal").classList.remove("hidden");
 }
-function closeSubmitForm() {
-  document.getElementById("submitModal").classList.add("hidden");
-}
+function closeSubmitForm() { document.getElementById("submitModal").classList.add("hidden"); }
 
 document.getElementById("submitForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -339,20 +276,14 @@ document.getElementById("submitForm").addEventListener("submit", async (e) => {
   };
   const res = await fetch(`${SUPABASE_URL}/rest/v1/mdf_data_submissions`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": ANON_KEY,
-      "Authorization": `Bearer ${ANON_KEY}`,
-      "Prefer": "return=minimal"
-    },
+    headers: { "Content-Type": "application/json", "apikey": ANON_KEY, "Authorization": `Bearer ${ANON_KEY}`, "Prefer": "return=minimal" },
     body: JSON.stringify(payload)
   });
   if (res.ok) {
     document.getElementById("submitConfirm").classList.remove("hidden");
     document.getElementById("submitForm").classList.add("hidden");
   } else {
-    const err = await res.text();
-    alert("Submission failed: " + err);
+    alert("Submission failed: " + await res.text());
   }
 });
 
