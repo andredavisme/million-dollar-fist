@@ -1,5 +1,10 @@
 // MDF Model Calculator — Million Dollar Fist
 // Pure client-side, no Supabase needed
+//
+// All default values and budget splits are sourced in:
+//   src/data/model-assumptions.js
+//
+// Data Integrity Policy: docs/data-integrity.md
 
 const fmt = (n) => {
   const abs = Math.abs(n);
@@ -43,12 +48,18 @@ function calculate(inp) {
   const upliftAmount = inp.totalRevenue * (inp.revenueUplift / 100);
   const mdfRevenue = (inp.totalRevenue + upliftAmount) * inp.localMultiplier;
 
-  // Spend savings
-  // Assume rough budget split: safety 25%, H&S 20%, capital 15%, debt 10%, other 30%
-  const safetySave   = inp.totalSpend * 0.25 * (inp.safetyReduction / 100);
-  const hsSave       = inp.totalSpend * 0.20 * (inp.hsReduction / 100);
-  const capitalSave  = inp.totalSpend * 0.15 * (inp.capitalDeferral / 100);
-  const debtSave     = inp.totalSpend * 0.10 * (inp.debtReduction / 100);
+  // Budget splits sourced from Urban Institute State & Local Expenditure averages.
+  // Source: https://www.urban.org/policy-centers/cross-center-initiatives/state-and-local-finance-initiative/state-and-local-backgrounders/state-and-local-expenditures
+  // Previously used 25/20/15/10 — those were arbitrary and overstated savings. Corrected below.
+  const SAFETY_SPLIT  = 0.15;  // public safety ~14% avg, rounded to 15%
+  const HS_SPLIT      = 0.10;  // health & human services ~10% avg
+  const CAPITAL_SPLIT = 0.10;  // capital outlay ~10% avg
+  const DEBT_SPLIT    = 0.04;  // interest on debt ~3% avg, rounded to 4%
+
+  const safetySave   = inp.totalSpend * SAFETY_SPLIT  * (inp.safetyReduction  / 100);
+  const hsSave       = inp.totalSpend * HS_SPLIT       * (inp.hsReduction      / 100);
+  const capitalSave  = inp.totalSpend * CAPITAL_SPLIT  * (inp.capitalDeferral  / 100);
+  const debtSave     = inp.totalSpend * DEBT_SPLIT     * (inp.debtReduction    / 100);
   const totalSavings = safetySave + hsSave + capitalSave + debtSave;
 
   const mdfSpend = inp.totalSpend - totalSavings;
@@ -181,12 +192,20 @@ document.querySelectorAll('input[type="range"], input[type="number"]').forEach(e
 });
 
 // Reset button
+// Defaults sourced from model-assumptions.js — see that file for citations.
+// Do not change these values without updating the source citations in model-assumptions.js first.
 const DEFAULTS = {
   totalRevenue: 50000000, totalSpend: 48000000, population: 50000,
-  localMultiplier: 1.2, revenueUplift: 5, safetyReduction: 10,
-  hsReduction: 8, capitalDeferral: 5, debtReduction: 3,
-  participationRate: 15, communityJobs: 200, dollarsCirculated: 1000000,
-  vacantProperties: 25
+  localMultiplier: 1.35,  // AMIBA / Reclaim Democracy local multiplier research
+  revenueUplift: 3,       // People Powered PB research (conservative)
+  safetyReduction: 8,     // Vera Institute CVI program outcomes (conservative translation)
+  hsReduction: 5,         // APHA community health worker research (conservative estimate)
+  capitalDeferral: 3,     // Modeled estimate — no direct citation yet
+  debtReduction: 2,       // Modeled estimate — no direct citation yet
+  participationRate: 15,  // Scenario input — user-defined
+  communityJobs: 200,     // Scenario input — user-defined
+  dollarsCirculated: 1000000, // Scenario input — user-defined
+  vacantProperties: 25    // Scenario input — user-defined
 };
 
 document.getElementById('resetBtn').addEventListener('click', () => {

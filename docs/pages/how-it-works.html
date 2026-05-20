@@ -236,7 +236,18 @@
 
       <!-- Year End -->
       <div class="mt-12">
-        <h3 class="text-2xl font-bold text-white mb-6">End of year: Millbrook by the numbers</h3>
+        <h3 class="text-2xl font-bold text-white mb-3">End of year: Millbrook by the numbers</h3>
+
+        <!-- Projection disclosure callout -->
+        <div class="mb-6 flex gap-3 items-start p-4 rounded-xl bg-blue-950/40 border border-blue-700/50">
+          <span class="text-blue-400 text-lg mt-0.5">&#x2139;</span>
+          <p class="text-sm text-blue-200">
+            <strong class="text-white">These are scenario projections, not verified data.</strong>
+            The numbers below are simulated outcomes based on the MDF model &mdash; what the research suggests <em>would happen</em> if these levers moved in a community of this size.
+            They are not guarantees. <a href="how-it-works.html#methodology" class="text-amber-400 underline hover:text-amber-300">See how we derived them &rarr;</a>
+          </p>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-gray-900 border border-gray-700 rounded-xl p-5"><p class="text-gray-400 text-xs uppercase tracking-widest mb-3">Crisis Response Time</p><div class="flex justify-between items-end"><div><p class="text-red-400 text-2xl font-bold">14&ndash;21 days</p><p class="text-gray-500 text-xs mt-1">Non-MDF average to first aid</p></div><div class="text-right"><p class="text-emerald-400 text-2xl font-bold">48&ndash;72 hrs</p><p class="text-gray-500 text-xs mt-1">MDF average to first aid</p></div></div></div>
           <div class="bg-gray-900 border border-gray-700 rounded-xl p-5"><p class="text-gray-400 text-xs uppercase tracking-widest mb-3">Local Businesses Surviving</p><div class="flex justify-between items-end"><div><p class="text-red-400 text-2xl font-bold">&minus;3</p><p class="text-gray-500 text-xs mt-1">Non-MDF (permanent closures)</p></div><div class="text-right"><p class="text-emerald-400 text-2xl font-bold">+2</p><p class="text-gray-500 text-xs mt-1">MDF (net new businesses)</p></div></div></div>
@@ -245,7 +256,102 @@
           <div class="bg-gray-900 border border-gray-700 rounded-xl p-5"><p class="text-gray-400 text-xs uppercase tracking-widest mb-3">Residents Fed Daily</p><div class="flex justify-between items-end"><div><p class="text-red-400 text-2xl font-bold">~60</p><p class="text-gray-500 text-xs mt-1">Non-MDF (single food bank)</p></div><div class="text-right"><p class="text-emerald-400 text-2xl font-bold">340+</p><p class="text-gray-500 text-xs mt-1">MDF (Community Kitchen + delivery)</p></div></div></div>
           <div class="bg-gray-900 border border-gray-700 rounded-xl p-5"><p class="text-gray-400 text-xs uppercase tracking-widest mb-3">Participation Rate (end of year)</p><div class="flex justify-between items-end"><div><p class="text-red-400 text-2xl font-bold">2%</p><p class="text-gray-500 text-xs mt-1">Non-MDF (voting + volunteerism)</p></div><div class="text-right"><p class="text-emerald-400 text-2xl font-bold">19%</p><p class="text-gray-500 text-xs mt-1">MDF (active stewards)</p></div></div></div>
         </div>
-        <p class="text-gray-500 text-xs mt-4">* Figures are illustrative projections based on MDF model assumptions, not verified municipal data.</p>
+      </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="mb-16" id="methodology">
+      <p class="text-amber-400 text-sm font-medium uppercase tracking-widest mb-3">How We Got These Numbers</p>
+      <h2 class="text-3xl font-bold text-white mb-4">Methodology</h2>
+      <p class="text-gray-400 mb-8">
+        Every projected number on this site &mdash; savings, participation rates, jobs, dollars circulated &mdash;
+        comes from a simulation model built on published research. This section explains how that model works,
+        where the baseline assumptions come from, and what the numbers actually mean.
+      </p>
+
+      <!-- What the model is -->
+      <div class="mb-10 p-6 rounded-2xl bg-gray-900 border border-gray-700">
+        <h3 class="text-xl font-semibold text-white mb-3">What &ldquo;simulated&rdquo; means</h3>
+        <p class="text-gray-300 mb-4">
+          The MDF model is a <strong class="text-white">scenario simulation</strong>. It asks: <em>&ldquo;If a community of this size activated these programs at these participation levels, what would the fiscal and social outcomes look like?&rdquo;</em>
+        </p>
+        <p class="text-gray-400 mb-4">
+          Inputs are drawn from a city&rsquo;s real budget data (revenue, spending, population). The model then applies
+          research-backed adjustment factors &mdash; called <strong class="text-white">model levers</strong> &mdash; to project outcomes.
+          The result is a plausible scenario range, not a prediction or a guarantee.
+        </p>
+        <p class="text-gray-400">
+          Projected numbers will differ from real outcomes based on local context, implementation quality, and factors
+          the model cannot anticipate. That uncertainty is intentional &mdash; we show ranges and conservative estimates
+          rather than precise claims.
+        </p>
+      </div>
+
+      <!-- Model levers -->
+      <h3 class="text-xl font-semibold text-white mb-4">The model levers</h3>
+      <p class="text-gray-400 mb-6">These are the adjustment factors the model applies to baseline city data. Each has a default value derived from external research.</p>
+      <div class="space-y-4 mb-10" id="leverList"></div>
+
+      <!-- Budget splits -->
+      <div class="mb-10 p-6 rounded-2xl bg-gray-900 border border-gray-700">
+        <h3 class="text-xl font-semibold text-white mb-3">Budget category splits</h3>
+        <p class="text-gray-400 mb-4">
+          To calculate dollar savings from each lever, the model needs to know what share of a city&rsquo;s total
+          spending falls in each category. We use national averages from the Urban Institute rather than
+          assuming fixed values.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <div class="bg-gray-800 rounded-lg p-3 text-center"><p class="text-amber-400 text-xl font-bold">15%</p><p class="text-gray-400 text-xs mt-1">Public Safety</p></div>
+          <div class="bg-gray-800 rounded-lg p-3 text-center"><p class="text-amber-400 text-xl font-bold">10%</p><p class="text-gray-400 text-xs mt-1">Health &amp; Human Services</p></div>
+          <div class="bg-gray-800 rounded-lg p-3 text-center"><p class="text-amber-400 text-xl font-bold">10%</p><p class="text-gray-400 text-xs mt-1">Capital / Infrastructure</p></div>
+          <div class="bg-gray-800 rounded-lg p-3 text-center"><p class="text-amber-400 text-xl font-bold">4%</p><p class="text-gray-400 text-xs mt-1">Debt Service</p></div>
+        </div>
+        <p class="text-gray-500 text-sm">
+          Source: <a href="https://www.urban.org/policy-centers/cross-center-initiatives/state-and-local-finance-initiative/state-and-local-backgrounders/state-and-local-expenditures" target="_blank" class="text-amber-400 hover:text-amber-300 underline">Urban Institute &mdash; State and Local Expenditures</a>.
+          A prior version of this model used 25/20/15/10 &mdash; those were arbitrary and overstated savings. These corrected values reduce projected outcomes and more accurately reflect reality.
+        </p>
+      </div>
+
+      <!-- Scenario inputs vs. model outputs -->
+      <div class="mb-10 p-6 rounded-2xl bg-gray-900 border border-gray-700">
+        <h3 class="text-xl font-semibold text-white mb-3">Scenario inputs vs. model outputs</h3>
+        <p class="text-gray-400 mb-3">
+          Not every number in the model is research-derived. Some &mdash; like participation rate, jobs created,
+          and dollars circulated &mdash; are <strong class="text-white">scenario inputs</strong> that you set based on your
+          community&rsquo;s context. The defaults represent a mid-sized city (~50,000 population) as a starting point.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-emerald-950/30 border border-emerald-700/40 rounded-lg p-4">
+            <p class="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-2">Model Outputs (research-backed)</p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>Revenue uplift from participatory budgeting</li>
+              <li>Safety spend reduction from CVI programs</li>
+              <li>Health &amp; human services offset from mutual aid</li>
+              <li>Local economic multiplier effect</li>
+            </ul>
+          </div>
+          <div class="bg-blue-950/30 border border-blue-700/40 rounded-lg p-4">
+            <p class="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-2">Scenario Inputs (user-defined)</p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>Participation rate</li>
+              <li>Community jobs created</li>
+              <li>Dollars circulated locally</li>
+              <li>Vacant properties activated</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data integrity note -->
+      <div class="p-5 rounded-xl bg-amber-950/30 border border-amber-700/50">
+        <p class="text-sm text-gray-300">
+          <strong class="text-amber-400">A note on our approach:</strong>
+          The goal of this project is to display the truth, not to make the data support a conclusion.
+          When research supported smaller effects than our prior assumptions, we updated the assumptions &mdash;
+          even when that reduced the projected benefits. Conservative, honest analysis is more useful to
+          communities than optimistic numbers that don&rsquo;t hold up to scrutiny.
+          <a href="https://github.com/andredavisme/million-dollar-fist/blob/main/docs/data-integrity.md" target="_blank" class="text-amber-400 underline hover:text-amber-300">Read the full data integrity policy &rarr;</a>
+        </p>
       </div>
     </section>
 
@@ -306,6 +412,58 @@ const timelineEvents = [
   { month: "December",  mdf: "Year-end: participation at 19%. Emergency Fund at 59% capacity. All projects active. Annual report published publicly within the month.", std: "Year-end: budget deficit of $340K. Three departments over budget. Annual report due in March." },
 ];
 
+// Model lever descriptions for the Methodology section
+const levers = [
+  {
+    label: "Local Multiplier",
+    default: "1.35&times;",
+    description: "How many times a dollar recirculates in the local economy before leaking out. Research shows local businesses recirculate ~48% of revenue locally vs. ~14% for chains. A blended municipal multiplier of 1.35&times; is conservative relative to sector-specific studies.",
+    source: "AMIBA / Reclaim Democracy",
+    sourceUrl: "https://amiba.net/local-multiplier/",
+    type: "research"
+  },
+  {
+    label: "Revenue Uplift",
+    default: "3%",
+    description: "Projected increase in a city's self-generated revenue through participatory budgeting and community trust-building. Set conservatively at 3% &mdash; direct revenue uplift evidence exists but is limited.",
+    source: "People Powered &mdash; PB Research 2025",
+    sourceUrl: "https://www.peoplepowered.org/news-content/the-latest-research-on-the-impacts-of-participatory-budgeting-2025",
+    type: "research"
+  },
+  {
+    label: "Safety Spend Reduction",
+    default: "8%",
+    description: "Projected reduction in public safety budget costs as community violence intervention (CVI) programs reduce incident rates. Vera Institute documents 30&ndash;50% reductions in violence incidents from CVI programs; 8% is a conservative translation to budget impact.",
+    source: "Vera Institute &mdash; CVI Programs Explained",
+    sourceUrl: "https://www.vera.org/community-violence-intervention-programs-explained",
+    type: "research"
+  },
+  {
+    label: "Health &amp; Human Services Reduction",
+    default: "5%",
+    description: "Projected reduction in health and human services spending through community health workers and mutual aid networks. Quantified municipal-level offsets are limited in current literature; 5% is a conservative modeled estimate.",
+    source: "APHA &mdash; Community Health Workers",
+    sourceUrl: "https://www.apha.org/policy-and-advocacy/public-health-policy-briefs/policy-database/2014/07/09/14/19/support-for-community-health-workers-to-increase-health-access",
+    type: "estimate"
+  },
+  {
+    label: "Capital Deferral",
+    default: "3%",
+    description: "Projected reduction in capital outlay through community-led maintenance. No direct empirical citation is available at this time. Set conservatively at 3% and flagged for future review.",
+    source: "Modeled estimate &mdash; no citation yet",
+    sourceUrl: null,
+    type: "estimate"
+  },
+  {
+    label: "Debt Service Reduction",
+    default: "2%",
+    description: "Projected reduction in debt service through participatory budgeting reducing reliance on debt financing. No direct empirical citation available. Set conservatively at 2%.",
+    source: "Modeled estimate &mdash; no citation yet",
+    sourceUrl: null,
+    type: "estimate"
+  },
+];
+
 const grid = document.getElementById("allocationGrid");
 allocation.forEach(a => {
   grid.innerHTML += `<div class="bg-gray-900 border border-gray-800 rounded-xl p-4"><div class="flex justify-between items-baseline mb-2"><span class="text-sm text-gray-200 font-medium">${a.label}</span><span class="${a.color} font-bold text-lg">${a.pct}%</span></div><div class="w-full bg-gray-800 rounded-full h-1.5"><div class="h-1.5 rounded-full bg-current ${a.color}" style="width:${Math.max(a.pct,3)}%"></div></div></div>`;
@@ -320,6 +478,26 @@ const timeline = document.getElementById("timeline");
 timelineEvents.forEach(e => {
   const isCrisis = e.crisis;
   timeline.innerHTML += `<div class="relative mb-10"><div class="absolute -left-10 w-4 h-4 rounded-full mt-1 ${isCrisis ? 'bg-red-500' : 'bg-amber-500'} border-2 border-gray-950"></div><p class="text-xs font-bold uppercase tracking-widest ${isCrisis ? 'text-red-400' : 'text-amber-400'} mb-2">${e.month}</p><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><div class="bg-gray-900 border ${isCrisis ? 'border-red-800' : 'border-gray-700'} rounded-lg px-4 py-3"><p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Non-MDF</p><p class="text-sm text-gray-300">${e.std}</p></div><div class="bg-emerald-950/20 border ${isCrisis ? 'border-red-800' : 'border-emerald-800/50'} rounded-lg px-4 py-3"><p class="text-xs text-emerald-500 uppercase tracking-widest mb-1">MDF City</p><p class="text-sm text-gray-300">${e.mdf}</p></div></div></div>`;
+});
+
+const leverList = document.getElementById("leverList");
+levers.forEach(l => {
+  const isEstimate = l.type === "estimate";
+  const sourceHtml = l.sourceUrl
+    ? `<a href="${l.sourceUrl}" target="_blank" class="text-amber-400 hover:text-amber-300 underline text-xs">${l.source}</a>`
+    : `<span class="text-yellow-500 text-xs">${l.source}</span>`;
+  leverList.innerHTML += `
+    <div class="bg-gray-900 border ${isEstimate ? 'border-yellow-700/50' : 'border-gray-700'} rounded-xl p-5">
+      <div class="flex items-start justify-between gap-4 mb-2">
+        <p class="font-semibold text-white">${l.label}</p>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-amber-400 font-bold text-sm">${l.default} default</span>
+          ${isEstimate ? '<span class="bg-yellow-900/50 text-yellow-400 text-xs px-2 py-0.5 rounded-full border border-yellow-700/50">modeled estimate</span>' : '<span class="bg-emerald-900/50 text-emerald-400 text-xs px-2 py-0.5 rounded-full border border-emerald-700/50">research-backed</span>'}
+        </div>
+      </div>
+      <p class="text-sm text-gray-400 mb-2">${l.description}</p>
+      <p class="text-xs text-gray-500">Source: ${sourceHtml}</p>
+    </div>`;
 });
 </script>
 </body>
