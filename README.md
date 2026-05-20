@@ -45,6 +45,15 @@ Funds are raised through global community effort and directed to specific projec
 | Residential Payout | 1% |
 | Business Payout | 1% |
 
+## Data Integrity
+
+This project is built on the principle that **the goal is to display the truth, not to make the data support a conclusion.**
+
+All model defaults are sourced from verified research. When a source cannot be found, assumptions are marked as modeled estimates and set conservatively. Projected outputs are scenario simulations — not guarantees.
+
+See the full policy: [docs/data-integrity.md](docs/data-integrity.md)  
+See all model sources: [src/data/model-assumptions.js](src/data/model-assumptions.js)
+
 ## Platform Goals
 
 - [ ] Philosophy education module
@@ -65,11 +74,14 @@ Funds are raised through global community effort and directed to specific projec
 
 ```
 million-dollar-fist/
-├── docs/                  # Philosophy and mission documentation
+├── docs/
+│   └── data-integrity.md  # Data integrity policy
 ├── src/
 │   ├── pages/             # Site pages
 │   ├── components/        # Reusable UI components
-│   ├── data/              # Static datasets and calculators
+│   ├── data/
+│   │   ├── model-assumptions.js  # All lever defaults + cited sources
+│   │   └── calculator.js         # MDF model calculator
 │   └── styles/            # CSS
 ├── supabase/
 │   ├── migrations/        # Database migrations
