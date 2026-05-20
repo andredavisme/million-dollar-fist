@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Methodology &mdash; Million Dollar Fist</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <style>
+    .page-hero {
+      margin-bottom: 3rem;
+    }
+    .page-hero .eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-accent);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .notice {
+      background: rgba(245,166,35,0.08);
+      border: 1px solid rgba(245,166,35,0.3);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3rem;
+      font-size: 0.9rem;
+      color: var(--color-mid);
+    }
+    .notice strong { color: var(--color-gold); }
+    .lever-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3rem;
+      font-size: 0.9rem;
+    }
+    .lever-table th {
+      text-align: left;
+      padding: 0.6rem 1rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-mid);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .lever-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: top;
+    }
+    .lever-table td:first-child {
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--color-accent);
+      white-space: nowrap;
+    }
+    .lever-table td:nth-child(2) {
+      color: var(--color-light);
+      font-weight: 600;
+    }
+    .lever-table td:nth-child(3) {
+      color: var(--color-mid);
+    }
+    .lever-table td:last-child {
+      color: var(--color-mid);
+      font-style: italic;
+    }
+    .lever-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .method-section { margin-bottom: 3.5rem; }
+    .method-section h2 { margin-bottom: 0.75rem; }
+    .method-section p { color: var(--color-mid); margin-bottom: 0.9rem; }
+    .method-section ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+    .method-section li { color: var(--color-mid); margin-bottom: 0.4rem; }
+    .method-section li strong { color: var(--color-light); }
+    .scenario-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .scenario-card h3 {
+      font-size: 1rem;
+      color: var(--color-gold);
+      margin-bottom: 0.4rem;
+    }
+    .scenario-card p {
+      font-size: 0.875rem;
+      color: var(--color-mid);
+      margin-bottom: 0;
+    }
+    .back-link {
+      display: inline-block;
+      color: var(--color-mid);
+      text-decoration: none;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2rem;
+    }
+    .back-link:hover { color: var(--color-light); }
+    .millbrook-note {
+      background: rgba(233,69,96,0.06);
+      border: 1px solid rgba(233,69,96,0.25);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .millbrook-note p {
+      font-size: 0.9rem;
+      color: var(--color-mid);
+      margin-bottom: 0;
+    }
+    .millbrook-note strong { color: var(--color-light); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Million Dollar Fist</h1>
+    <p class="tagline">A community-first framework for people who are done waiting for someone else to fix it.</p>
+    <nav>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="compare-cities.html">Compare Models</a>
+      <a href="calculator.html">Distribution Calculator</a>
+      <a href="dashboard.html">Community Data</a>
+    </nav>
+  </header>
+
+  <main>
+    <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+    <section class="page-hero">
+      <p class="eyebrow">Methodology</p>
+      <h2>Where the numbers come from</h2>
+      <p>Every projected figure on this site is derived from a model &mdash; not from verified municipal data unless explicitly labeled as such. This page explains how that model works, what its inputs are, and what the numbers do and do not mean.</p>
+    </section>
+
+    <div class="notice">
+      <strong>Important:</strong> Projected figures (participation rates, jobs created, dollars circulated, budget deltas) are <strong>scenario estimates</strong>, not guarantees or verified outcomes. They are designed to illustrate the direction and scale of change the MDF model could produce, not to predict exact results for any specific community.
+    </div>
+
+    <section class="method-section">
+      <h2>What &ldquo;modeled&rdquo; means</h2>
+      <p>The MDF Compare tool and the Millbrook scenario use a set of adjustable levers &mdash; percentage inputs that represent how community participation changes specific categories of municipal spending and local economic activity. When verified checkbook data is not available for a city, these levers are applied to population-scaled baseline estimates.</p>
+      <p>Think of it as a sensitivity model: it asks, &ldquo;If community participation changed this lever by X%, what would the downstream effect be?&rdquo; The model does not simulate human behavior &mdash; it applies directional assumptions grounded in comparable real-world programs and economic research.</p>
+    </section>
+
+    <section class="method-section">
+      <h2>The model levers</h2>
+      <p>These are the variables the MDF model adjusts. Each represents a category where community self-management is expected to change outcomes relative to a government-dependent baseline.</p>
+      <table class="lever-table">
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>What it represents</th>
+            <th>How it’s applied</th>
+            <th>Basis for default value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>local_multiplier_pct</td>
+            <td>Local money circulation</td>
+            <td>How much longer dollars stay in the local economy before leaking out. 1.0 = no change from baseline.</td>
+            <td>USDA & IMPLAN local multiplier research; community-owned businesses typically retain 2&ndash;4&times; more locally than chains.</td>
+          </tr>
+          <tr>
+            <td>revenue_uplift_pct</td>
+            <td>Self-generated revenue increase</td>
+            <td>% increase in community-generated revenue (fundraising, local business growth, fund returns).</td>
+            <td>Observed in participatory budgeting pilots; communities with active economic stewardship show 5&ndash;15% local revenue growth over 3 years.</td>
+          </tr>
+          <tr>
+            <td>safety_spend_reduction_pct</td>
+            <td>Public safety budget offset</td>
+            <td>Reduction in public safety expenditure driven by community programs that address root causes (food insecurity, youth engagement, mental health support).</td>
+            <td>Research on violence interruption and mutual aid programs; Oakland Ceasefire and similar initiatives showed 10&ndash;30% incident reductions.</td>
+          </tr>
+          <tr>
+            <td>hs_spend_reduction_pct</td>
+            <td>Health &amp; human services offset</td>
+            <td>Reduction in government health and human services spending when community programs cover basic needs directly.</td>
+            <td>Community health worker programs; mutual aid food systems have documented 10&ndash;25% reduction in emergency services utilization.</td>
+          </tr>
+          <tr>
+            <td>capital_deferral_pct</td>
+            <td>Capital outlay deferral</td>
+            <td>% of capital projects that can be deferred or reduced when community maintenance programs extend asset life.</td>
+            <td>Preventive maintenance research; community stewardship of public spaces reduces capital replacement frequency.</td>
+          </tr>
+          <tr>
+            <td>debt_reduction_pct</td>
+            <td>Debt service reduction</td>
+            <td>Reduction in debt service burden when participatory budgeting reduces reliance on bonds for community needs.</td>
+            <td>Illustrative assumption; participatory budgeting reduces project scope drift and cost overruns.</td>
+          </tr>
+          <tr>
+            <td>participation_rate_pct</td>
+            <td>Active community engagement</td>
+            <td>% of residents actively engaged as MDF stewards (volunteers, role-holders, fund participants). Drives all other levers.</td>
+            <td>Comparable community organizing efforts; sustained campaigns achieve 10&ndash;25% active participation in mature programs.</td>
+          </tr>
+          <tr>
+            <td>community_jobs_created</td>
+            <td>Net new local jobs</td>
+            <td>New employment generated by MDF projects (Community Kitchen staff, coordinators, local business growth).</td>
+            <td>Scaled from MDF role requirements and comparable mutual aid program employment data.</td>
+          </tr>
+          <tr>
+            <td>dollars_circulated_locally</td>
+            <td>Dollars retained locally</td>
+            <td>Total dollars that stay in the local economy vs. leaking to outside vendors or chains.</td>
+            <td>Applied via local_multiplier_pct to fund disbursements and local business spending patterns.</td>
+          </tr>
+          <tr>
+            <td>vacant_properties_reduced</td>
+            <td>Property activation</td>
+            <td>Number of vacant properties brought into productive community use through housing and business programs.</td>
+            <td>Community land trust and vacant lot activation research; illustrative estimate based on program scale.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="method-section">
+      <h2>The three scenarios</h2>
+      <p>The MDF Compare tool models three scenarios for each city to show a range of outcomes rather than a single projection.</p>
+      <div class="scenario-card">
+        <h3>Conservative</h3>
+        <p>Low participation (5&ndash;8%), minimal lever adjustments. Represents early-stage organizing with limited community buy-in. Used as the realistic floor.</p>
+      </div>
+      <div class="scenario-card">
+        <h3>Moderate</h3>
+        <p>Mid-range participation (12&ndash;18%), moderate lever values drawn from comparable real-world programs. The primary reference scenario.</p>
+      </div>
+      <div class="scenario-card">
+        <h3>Full Participation</h3>
+        <p>High participation (20&ndash;30%), levers at their research-supported upper bounds. Represents a mature, fully-functioning MDF community. Used as the directional ceiling &mdash; not a near-term prediction.</p>
+      </div>
+    </section>
+
+    <div class="millbrook-note">
+      <p><strong>About Millbrook:</strong> Millbrook is a fictitious city of 35,000 used in the <a href="how-it-works.html">How It Works</a> scenario. Its numbers &mdash; crisis response times, participation rates, residents fed, businesses affected &mdash; are illustrative projections built from the model levers above, applied to a population-scaled baseline. They represent what the model predicts, not a simulation of real events or a historical record.</p>
+    </div>
+
+    <section class="method-section">
+      <h2>When verified data is used</h2>
+      <p>For cities where official checkbook data has been loaded (municipal budget exports, state treasurer records, or audited financials), the model estimates are replaced with actual revenue and expenditure figures. The MDF levers are then applied on top of those verified baselines, not a population estimate.</p>
+      <p>Data sources by state:</p>
+      <ul>
+        <li><strong>Maine:</strong> <a href="https://opencheckbook.maine.gov" target="_blank" rel="noopener noreferrer">opencheckbook.maine.gov</a> &mdash; CSV download, annual</li>
+        <li><strong>Ohio:</strong> <a href="https://data.ohio.gov/wps/portal/gov/data/view/ohio-checkbook" target="_blank" rel="noopener noreferrer">Ohio Checkbook</a> &mdash; CSV download, semi-annual</li>
+        <li><strong>Massachusetts:</strong> <a href="https://www.mass.gov/orgs/division-of-local-services" target="_blank" rel="noopener noreferrer">MA Division of Local Services</a> &mdash; CSV download, annual</li>
+      </ul>
+      <p>If verified data has not yet been loaded for a city, the Compare tool displays an amber &ldquo;Model Estimates Active&rdquo; banner and provides a link to submit verified data.</p>
+    </section>
+
+    <section class="method-section">
+      <h2>What the model does not do</h2>
+      <ul>
+        <li>It does not simulate individual human behavior or predict how any specific community will respond.</li>
+        <li>It does not account for political resistance, legal barriers, or leadership failures.</li>
+        <li>It does not guarantee that lever values from one community will transfer to another.</li>
+        <li>It does not replace community-specific research, needs assessments, or organizing strategy.</li>
+      </ul>
+      <p>The model is a lens for understanding direction and scale &mdash; not a guarantee of outcome. The community determines the actual result.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Million Dollar Fist &mdash; Sponsored by Data Solutions for Me LLC &mdash; <a href="https://datasolutionsforme.com" target="_blank" rel="noopener noreferrer">datasolutionsforme.com</a></p>
+  </footer>
+
+</body>
+</html>
