@@ -1,0 +1,234 @@
+/* Calculator Styles — Million Dollar Fist */
+
+.calc-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.calc-intro {
+  margin-bottom: 2rem;
+}
+
+.calc-intro h2 {
+  font-size: 1.8rem;
+  color: var(--color-gold);
+  margin-bottom: 0.5rem;
+}
+
+.calc-intro p {
+  color: #aaa;
+  font-size: 0.95rem;
+}
+
+/* Two-column layout */
+.calc-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .calc-layout { grid-template-columns: 1fr; }
+}
+
+/* Controls Panel */
+.calc-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.control-section {
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+}
+
+.control-section h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-gold);
+  margin-bottom: 1.25rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-group input[type="number"] {
+  width: 100%;
+  background: #0f1a30;
+  border: 1px solid #444;
+  color: #f4f4f4;
+  padding: 0.45rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.input-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+/* Levers */
+.lever {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #1e2a4a;
+}
+
+.lever:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.lever-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+.lever-header label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.lever-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--color-gold);
+  min-width: 50px;
+  text-align: right;
+}
+
+.lever-desc {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+}
+
+.lever-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #555;
+  margin-top: 0.15rem;
+}
+
+/* Results Panel */
+.calc-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results-header h3 {
+  font-size: 1.2rem;
+  color: var(--color-gold);
+}
+
+.result-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.result-kpi {
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.result-kpi:hover { border-color: var(--color-gold); }
+
+.rkpi-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-gold);
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+.rkpi-val.negative { color: var(--color-accent); }
+
+.rkpi-label {
+  font-size: 0.72rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-chart-card,
+.result-table-card {
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.result-chart-card h4,
+.result-table-card h4 {
+  font-size: 0.9rem;
+  color: var(--color-gold);
+  margin-bottom: 1rem;
+}
+
+.assumptions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.assumptions-table th {
+  text-align: left;
+  color: #888;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid #2a2a4a;
+}
+
+.assumptions-table td {
+  padding: 0.45rem 0.5rem;
+  color: #ccc;
+  border-bottom: 1px solid #1a2040;
+}
+
+.assumptions-table td:first-child { color: #f4f4f4; font-weight: 600; }
+.assumptions-table td:last-child { color: #4ecdc4; }
+.assumptions-table td.negative { color: var(--color-accent); }
