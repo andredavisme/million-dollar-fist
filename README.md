@@ -51,7 +51,7 @@ This project is built on the principle that **the goal is to display the truth, 
 
 All model defaults are sourced from verified research. When a source cannot be found, assumptions are marked as modeled estimates and set conservatively. Projected outputs are scenario simulations — not guarantees.
 
-See the full policy: [docs/data-integrity.md](docs/data-integrity.md)  
+See the full policy: [src/data-integrity.md](src/data-integrity.md)  
 See all model sources: [src/data/model-assumptions.js](src/data/model-assumptions.js)
 
 ## Platform Goals
@@ -74,21 +74,23 @@ See all model sources: [src/data/model-assumptions.js](src/data/model-assumption
 
 ```
 million-dollar-fist/
-├── docs/
-│   └── data-integrity.md  # Data integrity policy
 ├── src/
-│   ├── pages/             # Site pages
-│   ├── components/        # Reusable UI components
+│   ├── data-integrity.md         # Data integrity policy
+│   ├── pages/                    # Site pages
+│   ├── components/               # Reusable UI components
 │   ├── data/
 │   │   ├── model-assumptions.js  # All lever defaults + cited sources
 │   │   └── calculator.js         # MDF model calculator
-│   └── styles/            # CSS
+│   └── styles/                   # CSS
+├── docs/                         # Auto-synced from src/ by CI (do not edit directly)
 ├── supabase/
-│   ├── migrations/        # Database migrations
-│   └── functions/         # Edge Functions
-├── assets/                # Images, logos, media
+│   ├── migrations/               # Database migrations
+│   └── functions/                # Edge Functions
+├── assets/                       # Images, logos, media
 └── README.md
 ```
+
+> **Note:** The `docs/` directory is automatically synced from `src/` by the deploy workflow. Do not edit files in `docs/` directly — changes will be overwritten. All source edits belong in `src/`.
 
 ## Supabase Project
 
