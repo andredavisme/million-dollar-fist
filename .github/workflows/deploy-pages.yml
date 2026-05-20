@@ -22,6 +22,22 @@ jobs:
           mkdir -p docs
           rsync -av --delete src/ docs/
 
+      - name: Write root redirect
+        run: |
+          cat > docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="refresh" content="0; url=pages/index.html" />
+            <title>Million Dollar Fist</title>
+          </head>
+          <body>
+            <p>Redirecting... <a href="pages/index.html">Click here if not redirected.</a></p>
+          </body>
+          </html>
+          EOF
+
       - name: Commit and push docs/
         run: |
           git config user.name "github-actions[bot]"
