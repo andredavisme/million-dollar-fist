@@ -58,11 +58,11 @@
           <div class="lever">
             <div class="lever-header">
               <label for="localMultiplier">Local Multiplier</label>
-              <span class="lever-val" id="localMultiplierVal">1.20×</span>
+              <span class="lever-val" id="localMultiplierVal">1.20&times;</span>
             </div>
             <p class="lever-desc">How much longer money circulates locally. 1.0 = no change.</p>
             <input type="range" id="localMultiplier" min="1.0" max="3.0" step="0.05" value="1.2" />
-            <div class="lever-range"><span>1.0×</span><span>3.0×</span></div>
+            <div class="lever-range"><span>1.0&times;</span><span>3.0&times;</span></div>
           </div>
 
           <div class="lever">
@@ -164,6 +164,14 @@
         <div class="results-header">
           <h3>Projected Outcomes</h3>
           <button class="btn btn-secondary" id="resetBtn">Reset Defaults</button>
+        </div>
+
+        <!-- Projection disclosure -->
+        <div style="margin-bottom:1rem; padding:0.75rem 1rem; border-radius:0.5rem; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.3); font-size:0.8rem; color:#93c5fd; line-height:1.5;">
+          <strong style="color:#fff;">These are scenario projections, not verified outcomes.</strong>
+          Results reflect what the research suggests would happen if these levers moved at this scale &mdash; not a guarantee.
+          Lever defaults are sourced from published research; some are conservative modeled estimates.
+          <a href="how-it-works.html#methodology" style="color:#f5a623; text-decoration:underline;">See full methodology &rarr;</a>
         </div>
 
         <!-- KPI Cards -->
