@@ -3,10 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MDF Compare — 207 Analytix</title>
+  <title>Compare Cities — Million Dollar Fist</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Bring in MDF header/nav styles without importing the full CSS */
+    :root {
+      --color-primary: #1a1a2e;
+      --color-accent: #e94560;
+      --color-gold: #f5a623;
+    }
+    body { background: var(--color-primary); }
+    .mdf-header {
+      padding: 2rem;
+      border-bottom: 2px solid var(--color-accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .mdf-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--color-gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0 0 0.25rem;
+    }
+    .mdf-header .tagline {
+      color: #ccc;
+      font-size: 1rem;
+      margin: 0.25rem 0 1rem;
+    }
+    .mdf-header nav a {
+      color: #f4f4f4;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .mdf-header nav a:hover { color: var(--color-accent); }
+    .mdf-header nav a.active {
+      color: var(--color-gold);
+      border-bottom: 2px solid var(--color-gold);
+      padding-bottom: 2px;
+    }
+    .mdf-footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid #333;
+      color: #ccc;
+      font-size: 0.85rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .mdf-footer a { color: var(--color-gold); text-decoration: none; }
+  </style>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
+
+  <header class="mdf-header">
+    <h1>Million Dollar Fist</h1>
+    <p class="tagline">Compare Cities</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="compare-cities.html" class="active">Compare Models</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="dashboard.html">Data Dashboard</a>
+    </nav>
+  </header>
 
   <div class="max-w-6xl mx-auto px-4 py-10">
 
@@ -112,6 +180,10 @@
       </p>
     </div>
   </div>
+
+  <footer class="mdf-footer">
+    <p>Million Dollar Fist &mdash; Sponsored by Data Solutions for Me LLC &mdash; <a href="https://datasolutionsforme.com">datasolutionsforme.com</a></p>
+  </footer>
 
 <script>
 const SUPABASE_URL = "https://hhyhulqngdkwsxhymmcd.supabase.co";
